@@ -54,6 +54,7 @@ flexitaka-video-kit/
 │   ├── check.js             ← environment / font / overflow self-test
 │   ├── plan-audio.js        ← the auto-timing brain: places every VO line
 │   ├── build-audio.js       ← music + sound-effect mix, then muxes into the MP4
+│   ├── qa-visibility.js     ← walks the timeline, proves nothing leaks between scenes
 │   └── dump-plan.js         ← prints the resolved timeline + audio plan
 │
 ├── assets/                  ← logo_original.png + logo_trimmed.png
@@ -67,6 +68,7 @@ flexitaka-video-kit/
     ├── VIDEO_CONFIG.md      ← every config field, explained
     ├── NEW_VIDEO_PROMPT.md  ← the prompt template for agents
     ├── SCENES.md            ← scene-by-scene description of the default video
+    ├── SCENE_QA_v3.md       ← frame-by-frame QA + leak report for the current cut
     └── qa-sheets/           ← rendered contact sheets used during QA
 ```
 
@@ -141,9 +143,19 @@ That single command does everything:
 ./render.sh silent     # picture only, no audio, no mux
 ./render.sh audio      # re-mix and re-mux only, reusing the last render
 node lib/dump-plan.js  # same as ./render.sh plan
+node lib/qa-visibility.js # prove no element leaks into a neighbouring scene
 ```
 
+`qa-visibility.js` steps the whole timeline and reads the effective opacity of
+every scene element at each step, then asserts that each one is visible only
+inside its own scene window. It is what catches a reveal, flash, light sweep or
+overlay layer bleeding across a cut — something no single screenshot shows.
+Pass `--step 0.02` for a finer walk or `--json out.json` to keep the raw samples.
+
 Runtime: roughly 3–6 minutes for a 10-second video (capture is the slow part).
+Long videos are fine: `lib/capture.js` recycles its Chromium every 150 frames
+(`CAPTURE_BATCH` to change) and resumes from any frame already on disk, so a
+renderer crash mid-capture restarts the browser instead of losing the run.
 
 ### Output
 
@@ -248,7 +260,8 @@ rescaled**. Where they appear:
 
 - **in a headline**, with `headlines[].logo` — the mark is rendered inline at
   `1.02em`, so it sits on the text baseline like a word would. This is how scene 1
-  and scene 4 show an operator mark where the brand's written name used to be.
+  and the scene 4 question show the **bKash** mark where the brand's written name
+  used to be.
 - **on a card**, with `props.headLogo` — used for the transfer card's header.
 - **in a row**, with the `operatorGrid` scene kind — one white card per brand.
   The cards use `object-fit: contain` and a `max-width`, so every mark keeps its
@@ -256,17 +269,19 @@ rescaled**. Where they appear:
   fit a common box.
 
 ```js
-// a row of marks — one entry per card
+// a row of marks — one entry per card.
+// NOTE: bKash is NOT here. It is a payment service, not a mobile operator, so
+// it belongs only in the scenes that talk about moving money. Keep this row to
+// mobile operators.
 {
   id: 's5', kind: 'operatorGrid', duration: 3.5, designDuration: 3.5,
   headlines: [{ text: 'যেকোনো অপারেটরের {SIM} থেকেই', size: 74, appear: 0.03 }],
-  vo: { file: 'vo/vo_s5_operators.mp3', cue: 0.55 },
   props: {
     appear: 0.16, stagger: 0.16, highlight: -1,
+    cardW: 470, cardH: 262, gap: 56, markW: 330, markH: 150,
     operators: [
-      { file: 'assets/logos/bkash.png',        alt: 'bKash' },
       { file: 'assets/logos/robi.png',         alt: 'Robi' },
-      { file: 'assets/logos/banglalink.png',   alt: 'BanglaLink' },
+      { file: 'assets/logos/banglalink.png',   alt: 'BanglaLink', markW: 356 },
       { file: 'assets/logos/grameenphone.png', alt: 'Grameenphone' },
     ],
   },
@@ -275,6 +290,13 @@ rescaled**. Where they appear:
 
 `highlight: -1` means no single brand is picked out. Set it to a card's index to
 put the yellow ring on that one instead.
+
+`cardW` / `cardH` / `gap` size the row and `markW` / `markH` cap each mark. They
+exist because the source files are of very different resolution: with a shared
+`markW` every mark spans the same width, so their heights differ only by their
+own aspect ratio — the only non-distorting way to balance a row. A per-operator
+`markW` (as on BanglaLink above) lets a smaller source file hold its own without
+ever being stretched.
 
 > **These are third-party trademarks.** They are used here because the client
 > asked for them. Get written permission / legal clearance from each brand
@@ -409,6 +431,9 @@ neither shows an error:
 - **An altered picture during the mux.** `lib/build-audio.js` records the video
   stream's MD5 before and after muxing and prints PASS/FAIL. The picture is
   copied, never re-encoded.
+- **A scene painting outside its own window.** Every scene's layers are hard
+  gated to its own start/end, so a reveal or overlay cannot appear early. Run
+  `node lib/qa-visibility.js` to assert it across the whole timeline.
 
 ---
 
@@ -425,8 +450,9 @@ neither shows an error:
   `flowToWallet`, `operatorGrid`, `logoReveal`.
 - **The `frames/` directory is generated**, not shipped. `render.sh` recreates it.
 - **Third-party trademarks — clearance required.** The default video displays
-  four third-party marks: **bKash**, **Robi Axiata**, **BanglaLink** and
-  **Grameenphone** (as logo images), and the word "বিকাশ" in the voice-over. These belong to
+  four third-party marks: **bKash** (scene 1 and the scene 4 question, as an
+  inline wordmark) and **Robi Axiata**, **BanglaLink** and **Grameenphone** (the
+  operator row in scene 5). These belong to
   their respective owners and are used here on the client's explicit instruction.
   **Written permission / legal clearance from every brand should be obtained
   before the video is published, broadcast or run as an advertisement.** Using a

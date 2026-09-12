@@ -1,8 +1,9 @@
 # SCENES.md — the default video, scene by scene
 
 The shipped `video.config.js` renders the **FlexiTaka "COMING SOON" teaser**:
-**20.000s**, 600 frames @ 30 fps, 1920×1080, with voice-over, music bed and
-sound effects.
+**20.000s**, 600 frames @ 30 fps, 1920×1080, with a music bed and transition sound
+effects. There is **no narration** in this cut — every `vo` block was removed;
+see the note at the end.
 
 | # | id | kind | from → to | length |
 |---|---|---|---|---|
@@ -52,64 +53,93 @@ SIM.
 
 ## Scene 4 — `s4` — 8.500s → 11.000s — `flowToWallet`
 
-Particles travel from the SIM symbol to the wallet, then the scene resolves into
-the promise. Two headlines cross-fade out as a third appears.
+Particles travel from the SIM symbol to the wallet while the question is asked.
+The two headline lines are one sentence in two parts, and **neither fades out** —
+the question holds at full strength right up to the cut.
+
+Nothing in this scene announces the launch. The `খুব শীঘ্রই আসছে` / `COMING SOON`
+message belongs to the end card alone (scene 6). The prop `dim: null` also keeps
+the visual from dimming at the end of the scene, because no reveal follows it.
 
 - **Headlines:** `{SIM}-এর অতিরিক্ত টাকা কি` and
-  `<mark> বা ব্যাংকে নিতে চান?` (the mark is the inline brand image) cross-fade
-  out at 0.56, then `খুব শীঘ্রই আসছে...` grows in with a glow.
+  `<mark> বা ব্যাংকে নিতে চান?` (the mark is the inline **bKash** image), both
+  holding to the cut.
 - **Transition:** a soft white flash at 10.34s covers the hand-off.
 - **Sound:** whoosh into the flash.
-- **Voice-over** (`vo/vo_s4_short.mp3`) at 8.600s → 10.258s.
+- **No narration** in this cut.
 
 ## Scene 5 — `s5` — 11.000s → 14.500s — `operatorGrid`
 
-A row of four third-party operator marks, one per white card, revealing left to
+A row of three **mobile-operator** marks, one per white card, revealing left to
 right. This is the scene that shows the product works on any operator.
 
+bKash is deliberately **not** in this row. It is a payment service, not a mobile
+operator, so its mark appears only in the scenes that actually talk about moving
+money — scene 1 and the scene 4 question.
+
 - **Headline:** `যেকোনো অপারেটরের {SIM} থেকেই`
-- **Cards:** `bkash.png`, `robi.png`, `banglalink.png`, `grameenphone.png` —
-  drawn unmodified, `object-fit: contain`, so every mark keeps its own aspect
-  ratio. `highlight: -1` means no single brand is singled out.
+- **Cards:** `robi.png`, `banglalink.png`, `grameenphone.png` — drawn unmodified,
+  `object-fit: contain`, so every mark keeps its own aspect ratio.
+  `highlight: -1` means no single brand is singled out.
+- **Card geometry** comes from the config (`cardW`, `cardH`, `gap`, `markW`,
+  `markH`, plus a per-mark `markW` override). The three source files are of very
+  different resolution, so the row is sized for the number of marks it holds.
+  BanglaLink's file is the smallest and carries a per-mark boost — it is never
+  stretched, only allowed a little more width.
 - **Sound:** whoosh + click on arrival.
-- **Voice-over** (`vo/vo_s5_operators.mp3`) at 11.550s → 13.880s.
+- **No narration** in this cut.
 
 ## Scene 6 — `s6` — 14.500s → 20.000s — `logoReveal`
 
 The end card: the FlexiTaka logo, the tagline and the call to action.
 
 - **Props:** `logo: assets/logo_trimmed.png`, `tagline: SIM BALANCE TO CASH`,
-  `cta: COMING SOON`.
+  `cta: COMING SOON`, `sub: খুব শীঘ্রই আসছে` — the Bangla launch line, one step
+  below the pill (set `sub: null` to drop it). **This is the only place in the
+  whole video where the "coming soon" message appears.**
 - **Two light sweeps** (0.38–0.80 and 1.62–2.17) cross the logo. The sweep is a
   **brightness-only layer masked by the logo itself**, so the logo file is never
   altered — no recolour, no redraw, no distortion.
 - **Idle float:** a ±4px vertical drift after 0.92s keeps the long hold alive.
-- **transition:** flash at the cut, riser just before it.
-- **Voice-over** (`vo/vo_s6_flexitaka.mp3`) at 15.050s → 19.598s.
+- **transition:** flash at the cut, riser just before it, then a ding as the
+  logo lands, a click as the tagline arrives and a whoosh on the CTA.
+- **No narration** in this cut.
 
 ---
 
-## The voice-over script
+## The on-screen script
 
-| scene | voiced line | on-screen |
-|---|---|---|
-| s1 | বিকাশে টাকা পাঠাতে গিয়ে… | ⟨brand mark⟩ থেকে টাকা পাঠাতে গিয়ে... |
-| s2 | ভুল করে রিচার্জ হয়ে গেছে? | ভুল করে {SIM}-এ রিচার্জ করে ফেলেছেন? |
-| s3 | অতিরিক্ত টাকা পড়ে আছে? | {SIM}-এ অতিরিক্ত টাকা পড়ে আছে? |
-| s4 | বিকাশে নাকি ব্যাংকে? | {SIM}-এর অতিরিক্ত টাকা কি ⟨brand mark⟩ বা ব্যাংকে নিতে চান? → খুব শীঘ্রই আসছে... |
-| s5 | যেকোনো অপারেটরের সিম থেকেই। | যেকোনো অপারেটরের {SIM} থেকেই |
-| s6 | ফ্লেক্সিটাকা — সিম ব্যালান্স টু ক্যাশ। খুব শীঘ্রই আসছে! | SIM BALANCE TO CASH · COMING SOON |
+This cut has **no narration** — the story is told entirely in on-screen text over
+the music bed and the sound effects.
 
-The voice-over is deliberately **shorter than the on-screen text**. The full
-sentences stay on screen as the brand message, while the narration speaks the key
-phrase of each — which is how a professional ad is paced. Reading all ~69
-on-screen syllables aloud would take roughly 12s on its own.
+| scene | on-screen text |
+|---|---|
+| s1 | 〈bKash mark〉 থেকে টাকা পাঠাতে গিয়ে... → then the card's `RECHARGE` / `SIM RECHARGE · SUCCESSFUL` |
+| s2 | ভুল করে {SIM}-এ রিচার্জ করে ফেলেছেন? |
+| s3 | {SIM}-এ অতিরিক্ত টাকা পড়ে আছে? (counter lands on ৳ 2,450) |
+| s4 | {SIM}-এর অতিরিক্ত টাকা কি 〈bKash mark〉 বা ব্যাংকে নিতে চান? |
+| s5 | যেকোনো অপারেটরের {SIM} থেকেই |
+| s6 | SIM BALANCE TO CASH · COMING SOON · খুব শীঘ্রই আসছে |
 
-Every line is auto-placed inside its own scene by `lib/plan-audio.js`. If a line
-would run past the end of its scene, the planner slides it earlier, then speaks
-it up to `maxSpeed`, and only as a last resort lengthens the scene — so a line is
-never cut off and two lines never overlap. Run `node lib/dump-plan.js` to see the
-result, or read `build/audio_report.json` after a render.
+Note that the launch message appears **only** in scene 6. Scene 4 asks its
+question and stops there.
+
+### Bringing the narration back
+
+The voice-over machinery is still fully wired — it is the config that has no `vo`
+blocks. Add one to any scene and the whole auto-timing / ducking chain returns:
+
+```js
+vo: { file: 'vo/vo_s1_bikash.mp3', cue: 0.20, text: 'বিকাশে টাকা পাঠাতে গিয়ে...' }
+```
+
+Every line is then auto-placed inside its own scene by `lib/plan-audio.js`. If a
+line would run past the end of its scene, the planner slides it earlier, then
+speaks it up to `maxSpeed`, and only as a last resort lengthens the scene — so a
+line is never cut off and two lines never overlap. Run `node lib/dump-plan.js` to
+see the result, or read `build/audio_report.json` after a render. Remove every
+`vo` block again and the mix falls back to music + effects, ducked by the effect
+bus instead of the voice bus.
 
 ## Sound design
 

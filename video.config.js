@@ -49,7 +49,7 @@ module.exports = {
     fps: 30,
     crf: 16,           // lower = better quality, bigger file (16 is near-lossless)
     preset: 'slow',    // ffmpeg x264 preset
-    outputName: 'flexitaka_coming_soon_teaser_20s',   // -> output/<name>.mp4
+    outputName: 'flexitaka_coming_soon_teaser_20s_v3',   // -> output/<name>.mp4
   },
 
   /* ------------------------------------------------------------ brand colours */
@@ -125,6 +125,7 @@ module.exports = {
         { file: 'sfx/click.mp3',  anchor: 's5', at: 0.30, gainDb: -3 },
         { file: 'sfx/riser.mp3',  anchor: 's6', at: -0.90, gainDb: -4 },
         { file: 'sfx/ding.mp3',   anchor: 's6', at: 0.56, gainDb: -1 },
+        { file: 'sfx/click.mp3',  anchor: 's6', at: 1.04, gainDb: -3 },
         { file: 'sfx/whoosh.mp3', anchor: 's6', at: 1.56, gainDb: -3 },
       ],
     },
@@ -221,12 +222,18 @@ module.exports = {
       kind: 'flowToWallet',
       duration: 2.5,
       designDuration: 2.0,
+      /* The question stays a QUESTION for the whole scene. Neither line carries
+         an `exit`, so both hold all the way to the cut, and nothing here
+         announces the launch - the "coming soon" message belongs to the end
+         card alone (scene 6). */
       headlines: [
-        { text: '{SIM}-\u098f\u09b0 \u0985\u09a4\u09bf\u09b0\u09bf\u0995\u09cd\u09a4 \u099f\u09be\u0995\u09be \u0995\u09bf', size: 72, appear: 0.375, exit: 0.56 },
-        { text: '\u09ac\u09be \u09ac\u09cd\u09af\u09be\u0982\u0995\u09c7 \u09a8\u09bf\u09a4\u09c7 \u099a\u09be\u09a8?', logo: 'assets/logos/bkash.png', size: 72, top: 196, appear: 0.425, exit: 0.56 },
-        { text: '\u0996\u09c1\u09ac \u09b6\u09c0\u0998\u09cd\u09b0\u0987 \u0986\u09b8\u099b\u09c7...', size: 92, top: 150, appear: 0.61, glow: true },
+        { text: '{SIM}-\u098f\u09b0 \u0985\u09a4\u09bf\u09b0\u09bf\u0995\u09cd\u09a4 \u099f\u09be\u0995\u09be \u0995\u09bf', size: 72, appear: 0.375 },
+        { text: '\u09ac\u09be \u09ac\u09cd\u09af\u09be\u0982\u0995\u09c7 \u09a8\u09bf\u09a4\u09c7 \u099a\u09be\u09a8?', logo: 'assets/logos/bkash.png', size: 72, top: 196, appear: 0.425 },
       ],
-      props: { particles: 7 },
+      /* dim:null - no end-of-scene dim, because nothing is revealed afterwards.
+         Set dim:{ from, to, amount } to fade the visual toward a following
+         reveal instead. */
+      props: { particles: 7, dim: null },
     },
 
     /* -------------------------------------------------- SCENE 5 — 11.0-14.5s - */
@@ -248,10 +255,28 @@ module.exports = {
         appear: 0.16,
         stagger: 0.16,
         highlight: -1,   // no single brand is singled out
+        /* Card geometry, so the row is sized for the number of marks it holds.
+           All three marks below end up limited by `markW`, which means they
+           all span the same width and their heights differ only by their own
+           aspect ratio - the only non-distorting way to balance a row built
+           from files of very different source resolution. */
+        cardW: 470,
+        cardH: 262,
+        gap: 56,
+        markW: 330,
+        markH: 150,
+        /* MOBILE OPERATORS ONLY. bKash is a separate payment service, not a
+           mobile operator, so its mark must never appear in this row - it
+           belongs to the scenes that actually talk about moving money (s1 and
+           the s4 question). Add or remove entries freely; the row re-centres
+           itself and every mark keeps its own aspect ratio (object-fit:
+           contain). BanglaLink here is the CURRENT (rebrand) mark. */
         operators: [
-          { file: 'assets/logos/bkash.png',        alt: 'bKash' },
           { file: 'assets/logos/robi.png',         alt: 'Robi' },
-          { file: 'assets/logos/banglalink.png',   alt: 'Banglalink' },
+          /* the BanglaLink source file is the smallest of the three, so it is
+             given a per-mark boost to hold its own beside the others - the
+             mark itself is still never stretched or recoloured. */
+          { file: 'assets/logos/banglalink.png',   alt: 'Banglalink', markW: 356 },
           { file: 'assets/logos/grameenphone.png', alt: 'Grameenphone' },
         ],
       },
@@ -272,6 +297,11 @@ module.exports = {
         logo: 'assets/logo_trimmed.png',   // NEVER alter this file — see README
         tagline: 'SIM BALANCE TO CASH',
         cta: 'COMING SOON',
+        /* The Bangla launch line, one step below the CTA pill. It lives HERE
+           and nowhere else: the end card is the ONLY place in the video where
+           the "coming soon" message is allowed to appear. Set `sub: null` (or
+           delete the key) to drop the line again. */
+        sub: 'খুব শীঘ্রই আসছে',
         sweep2At: 1.62,        // second sweep, for the longer hold
         sweep2Dur: 0.55,
         floatFrom: 0.92,       // idle float starts once the card has settled
