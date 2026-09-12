@@ -65,6 +65,7 @@ flexitaka-video-kit/
 ├── output/                  ← the finished MP4 + standalone audio
 ├── build/                   ← intermediate mix files + audio_report.json
 └── docs/
+    ├── HOW_IT_WORKS_BN.md   ← full walkthrough in Bangla, with verified output
     ├── VIDEO_CONFIG.md      ← every config field, explained
     ├── NEW_VIDEO_PROMPT.md  ← the prompt template for agents
     ├── SCENES.md            ← scene-by-scene description of the default video
