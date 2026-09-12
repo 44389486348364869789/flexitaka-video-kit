@@ -1,0 +1,110 @@
+{
+  "video": "flexitaka_coming_soon_teaser.mp4",
+  "videoStreamCopied": true,
+  "videoStreamMd5Before": "64715fadfc8b89ff1bafa1e6da7a69d2",
+  "videoStreamMd5After": "64715fadfc8b89ff1bafa1e6da7a69d2",
+  "totalSeconds": 10,
+  "sampleRate": 48000,
+  "clips": [
+    {
+      "scene": "s1",
+      "text": "বিকাশে টাকা পাঠাতে গিয়ে…",
+      "file": "vo/vo_s1_bikash.mp3",
+      "speechS": 1.97,
+      "speed": 1,
+      "startS": 0.2,
+      "endS": 2.17,
+      "rawPeakDbfs": -2.6,
+      "gainDb": -0.4,
+      "outPeakDbfs": -2.9,
+      "spilled": false
+    },
+    {
+      "scene": "s2",
+      "text": "ভুল করে রিচার্জ হয়ে গেছে?",
+      "file": "vo/vo_s2_wrong_recharge.mp3",
+      "speechS": 2.09,
+      "speed": 1.072,
+      "startS": 3,
+      "endS": 4.95,
+      "rawPeakDbfs": -4.5,
+      "gainDb": 1.5,
+      "outPeakDbfs": -2.9,
+      "spilled": false
+    },
+    {
+      "scene": "s3",
+      "text": "অতিরিক্ত টাকা পড়ে আছে?",
+      "file": "vo/vo_s3_extra_balance.mp3",
+      "speechS": 1.873,
+      "speed": 1,
+      "startS": 5.077,
+      "endS": 6.95,
+      "rawPeakDbfs": -1.7,
+      "gainDb": -1.3,
+      "outPeakDbfs": -2.9,
+      "spilled": false
+    },
+    {
+      "scene": "s4",
+      "text": "বিকাশে নাকি ব্যাংকে?",
+      "file": "vo/vo_s4_short.mp3",
+      "speechS": 1.658,
+      "speed": 1,
+      "startS": 7.05,
+      "endS": 8.708,
+      "rawPeakDbfs": -5,
+      "gainDb": 2,
+      "outPeakDbfs": -3,
+      "spilled": false
+    },
+    {
+      "scene": "s5",
+      "text": "শীঘ্রই আসছে!",
+      "file": "vo/vo_s5_coming_soon.mp3",
+      "speechS": 1.624,
+      "speed": 1.32,
+      "startS": 8.728,
+      "endS": 9.958,
+      "rawPeakDbfs": -6.8,
+      "gainDb": 3.8,
+      "outPeakDbfs": -3.1,
+      "spilled": false
+    }
+  ],
+  "music": {
+    "file": "music/flexitaka_teaser_bgm.mp3",
+    "gainDb": -12,
+    "fadeIn": 1,
+    "fadeOut": 1.6
+  },
+  "ducking": {
+    "threshold": 0.06,
+    "ratio": 4,
+    "attackMs": 5,
+    "releaseMs": 400,
+    "speechWindow": [
+      3.15,
+      4.65
+    ],
+    "gapWindow": [
+      2.2199999999999998,
+      3.02
+    ],
+    "speechRmsDbfs": -36.987577,
+    "gapRmsDbfs": -27.455593,
+    "voiceRmsDbfs": -16.907271
+  },
+  "final": {
+    "durationS": 10,
+    "lufs": -14.3,
+    "truePeakDbtp": -1.5,
+    "peakDbfs": -1.499683,
+    "rmsDbfs": -17.653328,
+    "flatFactor": 0,
+    "peakCount": 2,
+    "trimDb": 1.4,
+    "targetTruePeakDbtp": -1.5
+  },
+  "mp4SpeechRmsDbfs": -15.456663
+}

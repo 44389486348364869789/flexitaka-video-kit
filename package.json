@@ -1,0 +1,16 @@
+{
+  "name": "flexitaka-video-kit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reusable motion-graphics video kit - HTML/CSS/JS timeline -> headless Chromium -> ffmpeg MP4, with optional Bangla voice-over and music mix.",
+  "type": "commonjs",
+  "scripts": {
+    "plan": "node lib/dump-plan.js",
+    "check": "node lib/check.js",
+    "capture": "node lib/capture.js all",
+    "render": "./render.sh"
+  },
+  "dependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}
