@@ -1,110 +1,130 @@
 {
-  "video": "flexitaka_coming_soon_teaser.mp4",
+  "video": "flexitaka_coming_soon_teaser_20s.mp4",
   "videoStreamCopied": true,
-  "videoStreamMd5Before": "64715fadfc8b89ff1bafa1e6da7a69d2",
-  "videoStreamMd5After": "64715fadfc8b89ff1bafa1e6da7a69d2",
-  "totalSeconds": 10,
+  "videoStreamMd5Before": "e779bddef1d63e4ea6a5827b5d27d527",
+  "videoStreamMd5After": "e779bddef1d63e4ea6a5827b5d27d527",
+  "totalSeconds": 20,
   "sampleRate": 48000,
-  "clips": [
+  "clips": [],
+  "music": {
+    "file": "music/flexitaka_teaser_bgm_20s.mp3",
+    "gainDb": -9,
+    "fadeIn": 0.9,
+    "fadeOut": 2.2
+  },
+  "sfx": [
     {
-      "scene": "s1",
-      "text": "বিকাশে টাকা পাঠাতে গিয়ে…",
-      "file": "vo/vo_s1_bikash.mp3",
-      "speechS": 1.97,
-      "speed": 1,
-      "startS": 0.2,
-      "endS": 2.17,
-      "rawPeakDbfs": -2.6,
-      "gainDb": -0.4,
-      "outPeakDbfs": -2.9,
-      "spilled": false
+      "file": "sfx/whoosh.mp3",
+      "anchor": "s1",
+      "atS": 0.02,
+      "startS": 0.02,
+      "gainDb": -9
     },
     {
-      "scene": "s2",
-      "text": "ভুল করে রিচার্জ হয়ে গেছে?",
-      "file": "vo/vo_s2_wrong_recharge.mp3",
-      "speechS": 2.09,
-      "speed": 1.072,
-      "startS": 3,
-      "endS": 4.95,
-      "rawPeakDbfs": -4.5,
-      "gainDb": 1.5,
-      "outPeakDbfs": -2.9,
-      "spilled": false
+      "file": "sfx/click.mp3",
+      "anchor": "s1",
+      "atS": 1.55,
+      "startS": 1.55,
+      "gainDb": -8
     },
     {
-      "scene": "s3",
-      "text": "অতিরিক্ত টাকা পড়ে আছে?",
-      "file": "vo/vo_s3_extra_balance.mp3",
-      "speechS": 1.873,
-      "speed": 1,
-      "startS": 5.077,
-      "endS": 6.95,
-      "rawPeakDbfs": -1.7,
-      "gainDb": -1.3,
-      "outPeakDbfs": -2.9,
-      "spilled": false
+      "file": "sfx/ding.mp3",
+      "anchor": "s1",
+      "atS": 2.24,
+      "startS": 2.24,
+      "gainDb": -7
     },
     {
-      "scene": "s4",
-      "text": "বিকাশে নাকি ব্যাংকে?",
-      "file": "vo/vo_s4_short.mp3",
-      "speechS": 1.658,
-      "speed": 1,
-      "startS": 7.05,
-      "endS": 8.708,
-      "rawPeakDbfs": -5,
-      "gainDb": 2,
-      "outPeakDbfs": -3,
-      "spilled": false
+      "file": "sfx/whoosh.mp3",
+      "anchor": "s2",
+      "atS": 0.02,
+      "startS": 3.52,
+      "gainDb": -9
     },
     {
-      "scene": "s5",
-      "text": "শীঘ্রই আসছে!",
-      "file": "vo/vo_s5_coming_soon.mp3",
-      "speechS": 1.624,
-      "speed": 1.32,
-      "startS": 8.728,
-      "endS": 9.958,
-      "rawPeakDbfs": -6.8,
-      "gainDb": 3.8,
-      "outPeakDbfs": -3.1,
-      "spilled": false
+      "file": "sfx/click.mp3",
+      "anchor": "s3",
+      "atS": 0.5,
+      "startS": 6.5,
+      "gainDb": -8
+    },
+    {
+      "file": "sfx/ding.mp3",
+      "anchor": "s3",
+      "atS": 1.34,
+      "startS": 7.34,
+      "gainDb": -8
+    },
+    {
+      "file": "sfx/whoosh.mp3",
+      "anchor": "s4",
+      "atS": 1.8,
+      "startS": 10.3,
+      "gainDb": -8
+    },
+    {
+      "file": "sfx/whoosh.mp3",
+      "anchor": "s5",
+      "atS": 0.24,
+      "startS": 11.24,
+      "gainDb": -8
+    },
+    {
+      "file": "sfx/click.mp3",
+      "anchor": "s5",
+      "atS": 0.3,
+      "startS": 11.3,
+      "gainDb": -9
+    },
+    {
+      "file": "sfx/riser.mp3",
+      "anchor": "s6",
+      "atS": -0.9,
+      "startS": 13.6,
+      "gainDb": -10
+    },
+    {
+      "file": "sfx/ding.mp3",
+      "anchor": "s6",
+      "atS": 0.56,
+      "startS": 15.06,
+      "gainDb": -7
+    },
+    {
+      "file": "sfx/whoosh.mp3",
+      "anchor": "s6",
+      "atS": 1.56,
+      "startS": 16.06,
+      "gainDb": -9
     }
   ],
-  "music": {
-    "file": "music/flexitaka_teaser_bgm.mp3",
-    "gainDb": -12,
-    "fadeIn": 1,
-    "fadeOut": 1.6
-  },
   "ducking": {
-    "threshold": 0.06,
-    "ratio": 4,
-    "attackMs": 5,
-    "releaseMs": 400,
+    "threshold": 0.12,
+    "ratio": 2,
+    "attackMs": 8,
+    "releaseMs": 320,
     "speechWindow": [
-      3.15,
-      4.65
+      0.05,
+      0.45
     ],
     "gapWindow": [
-      2.2199999999999998,
-      3.02
+      0.97,
+      1.77
     ],
-    "speechRmsDbfs": -36.987577,
-    "gapRmsDbfs": -27.455593,
-    "voiceRmsDbfs": -16.907271
+    "speechRmsDbfs": -34.209802,
+    "gapRmsDbfs": -24.401267,
+    "voiceRmsDbfs": null
   },
   "final": {
-    "durationS": 10,
-    "lufs": -14.3,
+    "durationS": 20,
+    "lufs": -16.8,
     "truePeakDbtp": -1.5,
     "peakDbfs": -1.499683,
-    "rmsDbfs": -17.653328,
+    "rmsDbfs": -19.250012,
     "flatFactor": 0,
     "peakCount": 2,
-    "trimDb": 1.4,
+    "trimDb": 5.1,
     "targetTruePeakDbtp": -1.5
   },
-  "mp4SpeechRmsDbfs": -15.456663
+  "mp4SpeechRmsDbfs": -20.374897
 }

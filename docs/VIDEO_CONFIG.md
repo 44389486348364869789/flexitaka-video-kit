@@ -78,10 +78,10 @@ audio: {
 | `enabled` | `false` produces a silent video and skips every audio step. |
 | `targetTruePeakDb` | Final true-peak ceiling. `-1.5` is the streaming-safe default. |
 | `music.file` | Path to the music bed, relative to the project root. |
-| `music.gainDb` | Level of the bed **before** ducking. More negative = quieter. |
+| `music.gainDb` | Level of the bed **before** ducking. More negative = quieter. `-9` here, with no narration to sit under (it was `-13` in the narrated cut). |
 | `music.fadeIn` / `fadeOut` | Fade lengths in seconds. `fadeOut` is measured back from the end. |
-| `duck.threshold` | How loud the voice must be before the music is pushed down. |
-| `duck.ratio` | How hard it is pushed. Higher = more aggressive. |
+| `duck.threshold` | How loud the key bus must be before the music is pushed down. |
+| `duck.ratio` | How hard it is pushed. Higher = more aggressive. In a narration-free cut the key is the sound-effect bus, so this is gentler (`0.12` / `2`) — ducking on sparse accents wants a softer ratio than ducking under continuous speech. |
 | `duck.attackMs` / `releaseMs` | How fast ducking engages and lets go. |
 | `vo.leadIn` | Default gap between a scene starting and its VO starting (s). |
 | `vo.tailGap` | Keep the line this far clear of the scene end (s). |
@@ -125,7 +125,7 @@ The array **order is the timeline order**. Each entry:
 | `duration` | yes | Seconds on screen. **This is the length knob.** |
 | `designDuration` | no | The length the animation was drawn for. Defaults to `duration`. |
 | `headlines` | no | On-screen text. See below. |
-| `vo` | no | Voice-over for this scene. See below. |
+| `vo` | no | Voice-over for this scene. `{ file, cue, text }`. **Omit it entirely for a narration-free cut** — the whole VO bus and its ducking are then skipped. |
 | `props` | no | Scene-specific settings passed to the visual module. |
 
 ### Scene kinds

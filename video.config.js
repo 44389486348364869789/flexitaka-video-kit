@@ -24,6 +24,13 @@
  *  adjustment is printed by `node lib/dump-plan.js` and written to
  *  build/audio_report.json.
  *
+ *  THIS CUT HAS NO NARRATION. No scene below carries a `vo` block, so the
+ *  audio build has no voice bus to mix: the soundtrack is the music bed plus
+ *  the sound effects alone. The voice-over machinery is still fully wired --
+ *  add a `vo: { file, cue, text }` block to any scene and the whole auto-timing
+ *  / ducking chain comes straight back. Because there is no speech to stay
+ *  under, the bed is set louder here than in the narrated cut.
+ *
  *  Quick start:   ./render.sh              (full build)
  *                 ./render.sh probe        (a few still frames, fast)
  *                 ./render.sh check        (environment + font check only)
@@ -78,13 +85,15 @@ module.exports = {
 
     music: {
       file:     'music/flexitaka_teaser_bgm_20s.mp3',
-      gainDb:   -13,          // level of the bed before ducking
-      fadeIn:   1.2,          // seconds
-      fadeOut:  1.8,          // seconds, measured back from the end
+      gainDb:   -9,           // level of the bed before ducking (louder: no VO)
+      fadeIn:   0.9,          // seconds
+      fadeOut:  2.2,          // seconds, measured back from the end
     },
 
-    // The music is pushed down while the voice speaks.
-    duck: { threshold: 0.06, ratio: 4, attackMs: 5, releaseMs: 400 },
+    // The music is pushed down while the voice speaks. With no voice-over in
+    // this cut the side-chain is fed by the SOUND-EFFECT bus instead, so the
+    // bed still breathes under each transition accent.
+    duck: { threshold: 0.12, ratio: 2, attackMs: 8, releaseMs: 320 },
 
     vo: {
       leadIn:   0.18,   // default gap between a scene starting and its VO starting
@@ -103,7 +112,7 @@ module.exports = {
      * music is ducked only by the voice, never by the effects.
      */
     sfx: {
-      masterGainDb: -9,
+      masterGainDb: -6,
       cues: [
         { file: 'sfx/whoosh.mp3', anchor: 's1', at: 0.02, gainDb: -3 },
         { file: 'sfx/click.mp3',  anchor: 's1', at: 1.55, gainDb: -2 },
@@ -176,11 +185,6 @@ module.exports = {
           appear: 0.01,
         },
       ],
-      vo: {
-        file: 'vo/vo_s1_bikash.mp3',
-        cue: 0.25,
-        text: '\u09ac\u09bf\u0995\u09be\u09b6\u09c7 \u099f\u09be\u0995\u09be \u09aa\u09be\u09a0\u09be\u09a4\u09c7 \u0997\u09bf\u09af\u09bc\u09c7\u2026',
-      },
       props: {
         headLogo: 'assets/logos/bkash.png',
         sendLabel: 'SEND MONEY',
@@ -198,11 +202,6 @@ module.exports = {
       duration: 2.5,
       designDuration: 2.0,
       headlines: [{ text: '\u09ad\u09c1\u09b2 \u0995\u09b0\u09c7 {SIM}-\u098f \u09b0\u09bf\u099a\u09be\u09b0\u09cd\u099c \u0995\u09b0\u09c7 \u09ab\u09c7\u09b2\u09c7\u099b\u09c7\u09a8?', size: 72, appear: 0.0 }],
-      vo: {
-        file: 'vo/vo_s2_wrong_recharge.mp3',
-        cue: 0.20,
-        text: '\u09ad\u09c1\u09b2 \u0995\u09b0\u09c7 \u09b0\u09bf\u099a\u09be\u09b0\u09cd\u099c \u09b9\u09af\u09bc\u09c7 \u0997\u09c7\u099b\u09c7?',
-      },
       props: { badge: 'check', mark: 'exclaim' },
     },
 
@@ -213,11 +212,6 @@ module.exports = {
       duration: 2.5,
       designDuration: 2.0,
       headlines: [{ text: '{SIM}-\u098f \u0985\u09a4\u09bf\u09b0\u09bf\u0995\u09cd\u09a4 \u099f\u09be\u0995\u09be \u09aa\u09a1\u09bc\u09c7 \u0986\u099b\u09c7?', size: 80, appear: 0.0 }],
-      vo: {
-        file: 'vo/vo_s3_extra_balance.mp3',
-        cue: 0.20,
-        text: '\u0985\u09a4\u09bf\u09b0\u09bf\u0995\u09cd\u09a4 \u099f\u09be\u0995\u09be \u09aa\u09a1\u09bc\u09c7 \u0986\u099b\u09c7?',
-      },
       props: { counterTarget: 2450, counterPrefix: '\u09f3 ', bars: 6, barHeights: [130, 175, 225, 280, 340, 400] },
     },
 
@@ -232,11 +226,6 @@ module.exports = {
         { text: '\u09ac\u09be \u09ac\u09cd\u09af\u09be\u0982\u0995\u09c7 \u09a8\u09bf\u09a4\u09c7 \u099a\u09be\u09a8?', logo: 'assets/logos/bkash.png', size: 72, top: 196, appear: 0.425, exit: 0.56 },
         { text: '\u0996\u09c1\u09ac \u09b6\u09c0\u0998\u09cd\u09b0\u0987 \u0986\u09b8\u099b\u09c7...', size: 92, top: 150, appear: 0.61, glow: true },
       ],
-      vo: {
-        file: 'vo/vo_s4_short.mp3',
-        cue: 0.10,
-        text: '\u09ac\u09bf\u0995\u09be\u09b6\u09c7 \u09a8\u09be\u0995\u09bf \u09ac\u09cd\u09af\u09be\u0982\u0995\u09c7?',
-      },
       props: { particles: 7 },
     },
 
@@ -255,11 +244,6 @@ module.exports = {
           appear: 0.03,
         },
       ],
-      vo: {
-        file: 'vo/vo_s5_operators.mp3',
-        cue: 0.55,
-        text: '\u09af\u09c7\u0995\u09cb\u09a8\u09cb \u0985\u09aa\u09be\u09b0\u09c7\u099f\u09b0\u09c7\u09b0 \u09b8\u09bf\u0986\u0987\u0986\u0987\u0986\u09b0 \u09a5\u09c7\u0995\u09c7\u0987',
-      },
       props: {
         appear: 0.16,
         stagger: 0.16,
@@ -284,11 +268,6 @@ module.exports = {
       duration: 5.5,
       designDuration: 5.5,
       headlines: [],
-      vo: {
-        file: 'vo/vo_s6_flexitaka.mp3',
-        cue: 0.55,
-        text: '\u09ab\u09cd\u09b2\u09c7\u0995\u09cd\u09b8\u09bf\u099f\u09be\u0995\u09be \u2014 \u09b8\u09bf\u09ae \u09ac\u09cd\u09af\u09be\u09b2\u09be\u09a8\u09cd\u09b8 \u099f\u09c1 \u0995\u09cd\u09af\u09be\u09b6\u0964 \u0996\u09c1\u09ac \u09b6\u09c0\u0998\u09cd\u09b0\u0987 \u0986\u09b8\u099b\u09c7!',
-      },
       props: {
         logo: 'assets/logo_trimmed.png',   // NEVER alter this file — see README
         tagline: 'SIM BALANCE TO CASH',

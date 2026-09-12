@@ -15,6 +15,8 @@ Here is what I want:
   SCENE PLAN  : <for each scene: what it shows, and the exact on-screen text>
   BRAND       : <colours, or "keep the FlexiTaka green/white/yellow">
   VOICE-OVER  : <Bangla lines, or "keep the existing clips" / "no voice-over">
+                ("no voice-over" means: leave every scene without a `vo` block.
+                 The music level and the duck settings are rebalanced for you.)
   MUSIC       : <keep the existing bed / no music / a different mood>
   LOGO        : <keep the FlexiTaka logo, or give me a new file to use>
 

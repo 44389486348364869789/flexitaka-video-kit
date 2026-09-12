@@ -1,7 +1,12 @@
 # FlexiTaka Video Kit
 
 A reusable, editable motion-graphics video project. Edit **one config file**, run
-**one command**, get a finished MP4 — with Bangla typography, voice-over and music.
+**one command**, get a finished MP4 — with Bangla typography, music and sound effects.
+
+> This particular cut ships **without narration**: no scene carries a `vo` block, so
+the soundtrack is the music bed plus transition sound effects. The voice-over
+machinery is fully intact and documented below — add a `vo` block to any scene
+and the auto-timing and ducking chain returns.
 
 The whole video is built from HTML + CSS + JavaScript. A headless Chromium
 screenshots the animated page frame by frame, then ffmpeg assembles the PNG
@@ -48,12 +53,12 @@ flexitaka-video-kit/
 │   ├── capture.js           ← drives Chromium, writes every frame
 │   ├── check.js             ← environment / font / overflow self-test
 │   ├── plan-audio.js        ← the auto-timing brain: places every VO line
-│   ├── build-audio.js       ← voice-over + music mix, then muxes into the MP4
+│   ├── build-audio.js       ← music + sound-effect mix, then muxes into the MP4
 │   └── dump-plan.js         ← prints the resolved timeline + audio plan
 │
 ├── assets/                  ← logo_original.png + logo_trimmed.png
 ├── fonts/                   ← Hind Siliguri (Bangla) + Poppins (Latin)
-├── vo/                      ← voice-over clips, one per scene
+├── vo/                      ← voice-over clips, one per scene (unused in this cut)
 ├── music/                   ← background music bed
 ├── index.html               ← GENERATED — do not edit by hand
 ├── output/                  ← the finished MP4 + standalone audio
@@ -121,8 +126,9 @@ That single command does everything:
 5. **Self-test** — fonts, page errors, and headline overflow.
 6. **Capture** one PNG per frame at the video's fps and resolution.
 7. **Encode** H.264 High, yuv420p, `+faststart`.
-8. **Audio** — trim and level each voice-over clip, duck the music under it,
-   hold the true peak, then mux with `-c:v copy` so the picture is untouched.
+8. **Audio** — fade the music bed, sum the sound effects on their own bus,
+   duck the bed under whichever bus carries the transients, hold the true peak,
+   then mux with `-c:v copy` so the picture is untouched.
 9. **Verify** — re-reads the output and asserts frame count, resolution and
    duration all match the config.
 
@@ -163,7 +169,7 @@ Everything lives in **`video.config.js`**. The most common edits:
 | **Brand colours** | the `theme` block |
 | **Resolution / fps / quality** | the `video` block (`crf` lower = better) |
 | **Music and its level** | the `audio.music` block |
-| **Voice-over lines** | each scene's `vo` block |
+| **Voice-over lines** | each scene's `vo` block (none in this cut) |
 
 Full field-by-field reference: **`docs/VIDEO_CONFIG.md`**.
 
@@ -204,8 +210,13 @@ Whatever it had to do is printed by `./render.sh plan` and written into
 ### Music is ducked automatically
 
 The music bed is trimmed to the video's length, faded in and out, and pushed
-down while the voice speaks. The QC report prints how far below the voice the
-music sits in the gaps and during speech.
+down under whatever carries the transients. With narration that is the **voice
+bus**; in a narration-free cut like this one the **sound-effect bus** drives it
+instead, so the bed still breathes under each transition accent. With neither,
+the bed passes through un-ducked rather than being fed an empty input. If there
+is no voice bus at all, `build-audio.js` skips that stage entirely instead of
+summing zero inputs. The QC report prints the measured level in an accent
+window and in a quiet window.
 
 ### The logo is never altered
 
@@ -288,7 +299,7 @@ you change scene lengths — exactly like transitions:
 ```js
 audio: {
   sfx: {
-    masterGainDb: -9,          // the whole bus, kept well under the voice
+    masterGainDb: -6,          // the whole bus; -9 when narration has to stay on top
     cues: [
       { file: 'sfx/whoosh.mp3', anchor: 's1', at: 0.02, gainDb: -3 },
       { file: 'sfx/ding.mp3',   anchor: 's1', at: 2.24, gainDb: -1 },
@@ -298,8 +309,9 @@ audio: {
 }
 ```
 
-The effects are summed on their **own bus**. The music ducking is driven by the
-voice bus alone, so an effect never pulls the music down. Anything outside the
+The effects are summed on their **own bus** and ducked under whichever bus
+carries the transients — the voice bus when there is narration, otherwise the
+effects bus itself. Anything outside the
 timeline is skipped with a printed note rather than failing the render.
 
 ---
@@ -377,7 +389,7 @@ The default config renders the FlexiTaka "COMING SOON" teaser exactly:
 duration   : 20.000000 s  (exact, matches the config)
 frames     : 600 @ 30 fps  (exact)
 resolution : 1920 x 1080, yuv420p, H.264 High
-audio      : AAC, 48 kHz stereo — voice-over + ducked music + effects
+audio      : AAC, 48 kHz stereo — music bed + transition effects (no narration)
 true peak  : -1.5 dBTP     (no clipping; flat factor 0.0)
 ```
 
