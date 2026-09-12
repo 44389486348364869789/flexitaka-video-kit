@@ -1,126 +1,136 @@
 # SCENES.md — the default video, scene by scene
 
-The default config renders the FlexiTaka **"COMING SOON"** teaser: 10.000s at
-30 fps, 1920×1080, with Bangla voice-over and a ducked music bed.
+The shipped `video.config.js` renders the **FlexiTaka "COMING SOON" teaser**:
+**20.000s**, 600 frames @ 30 fps, 1920×1080, with voice-over, music bed and
+sound effects.
 
-Style rules the whole video obeys: green/white/yellow brand palette, clean
-motion graphics, **no people, no photographs, no stock footage, no emojis, no
-extra logos, no watermark**. Typography and simple vector symbols only.
+| # | id | kind | from → to | length |
+|---|---|---|---|---|
+| 1 | `s1` | `transferCard` | 0.000s → 3.500s | 3.5s |
+| 2 | `s2` | `simCard` | 3.500s → 6.000s | 2.5s |
+| 3 | `s3` | `counterBars` | 6.000s → 8.500s | 2.5s |
+| 4 | `s4` | `flowToWallet` | 8.500s → 11.000s | 2.5s |
+| 5 | `s5` | `operatorGrid` | 11.000s → 14.500s | 3.5s |
+| 6 | `s6` | `logoReveal` | 14.500s → 20.000s | 5.5s |
 
----
-
-## Scene 1 — `s1` — 0.000s → 3.000s — `transferCard`
-
-| | |
-|---|---|
-| **Headline** | `বিকাশে টাকা পাঠাতে গিয়ে...` |
-| **Voice-over** | `বিকাশে টাকা পাঠাতে গিয়ে…` — starts at 0.200s |
-| **Music** | fading in from 0s over 1.0s |
-
-A white transfer card rises into frame. Two placeholder rows populate one after
-the other; the yellow **SEND MONEY** button pulses, then a ripple crosses it.
-
-Then the accidental action: the button cross-fades to **RECHARGE**, the card
-dims, and a confirmation sheet slides up from the bottom carrying a green disc
-with a drawn-on check mark, `SIM RECHARGE` and `SUCCESSFUL`.
-
-That is the whole beat — a normal transfer that turns into the wrong recharge.
+Scene timings are computed from the `duration` values — nothing is hard-coded,
+so changing them re-times everything, including the audio plan.
 
 ---
 
-## Scene 2 — `s2` — 3.000s → 5.000s — `simCard`
+## Scene 1 — `s1` — 0.000s → 3.500s — `transferCard`
 
-| | |
-|---|---|
-| **Headline** | `ভুল করে {SIM}-এ রিচার্জ করে ফেলেছেন?` |
-| **Voice-over** | `ভুল করে রিচার্জ হয়ে গেছে?` — starts at 3.150s |
+A phone-money transfer card animates in and then flips into a **SIM recharge
+confirmation** — the accident the whole teaser is about.
 
-A large SIM card fades up centre-frame, holds, then shakes left and right — the
-"that's not what I wanted" beat. A white success badge with a green check pops
-onto its lower corner. A yellow warning mark settles in above.
+- **Headline:** an operator brand mark (inline image) followed by
+  `থেকে টাকা পাঠাতে গিয়ে...`. The mark stands in for the brand's written name.
+- **Card header:** the same mark, via `props.headLogo`.
+- **Beat:** `SEND MONEY` → `RECHARGE` → the card resolves to
+  `SIM RECHARGE / SUCCESSFUL`.
+- **Sound:** whoosh on entry, click on the press, ding on the confirmation.
+- **Voice-over** (`vo/vo_s1_bikash.mp3`) starts at 0.250s and runs to 2.220s.
 
----
+## Scene 2 — `s2` — 3.500s → 6.000s — `simCard`
 
-## Scene 3 — `s3` — 5.000s → 7.000s — `counterBars`
+A SIM card with a success badge and a warning mark.
 
-| | |
-|---|---|
-| **Headline** | `{SIM}-এ অতিরিক্ত টাকা পড়ে আছে?` |
-| **Voice-over** | `অতিরিক্ত টাকা পড়ে আছে?` — starts at 5.150s |
+- **Headline:** `ভুল করে {SIM}-এ রিচার্জ করে ফেলেছেন?`
+  (`{SIM}` renders in the Latin font, so the technical term reads as a term.)
+- **Sound:** whoosh on entry.
+- **Voice-over** (`vo/vo_s2_wrong_recharge.mp3`) at 3.700s → 5.790s.
 
-A smaller SIM card sits at the left. Six bars grow one after another from a
-dashed baseline; the last one is yellow. A green pill rides up with the tallest
-bar, counting to **৳ 2,450** — the unused balance piling up.
+## Scene 3 — `s3` — 6.000s → 8.500s — `counterBars`
 
----
+A bar chart grows while a counter ticks up, showing money sitting unused on the
+SIM.
 
-## Scene 4 — `s4` — 7.000s → 9.000s — `flowToWallet`
+- **Headline:** `{SIM}-এ অতিরিক্ত টাকা পড়ে আছে?`
+- **Props:** `counterTarget: 2450` (with a `৳` prefix), 6 bars.
+- **Sound:** click as the counter starts, ding as it lands.
+- **Voice-over** (`vo/vo_s3_extra_balance.mp3`) at 6.200s → 8.073s.
 
-| | |
-|---|---|
-| **Headline 1** | `{SIM}-এর অতিরিক্ত টাকা কি` — appears at 7.750s, exits at 8.120s |
-| **Headline 2** | `বিকাশ বা ব্যাংকে নিতে চান?` — appears at 7.850s, exits at 8.120s |
-| **Headline 3** | `খুব শীঘ্রই আসছে...` — appears at 8.220s, with glow |
-| **Voice-over** | `বিকাশে নাকি ব্যাংকে?` — starts at 7.050s |
-| **Transition** | `flash` at 8.840s for 0.32s, strength 0.34 |
+## Scene 4 — `s4` — 8.500s → 11.000s — `flowToWallet`
 
-The question is asked over a SIM card on the left and a wallet on the right,
-joined by a dashed arc. Seven yellow particles travel along the arc from the
-SIM into the wallet — the balance moving into a digital wallet.
+Particles travel from the SIM symbol to the wallet, then the scene resolves into
+the promise. Two headlines cross-fade out as a third appears.
 
-As the voice finishes, the first two headlines swap to
-`খুব শীঘ্রই আসছে...` over a soft yellow glow, and a white flash wipes the
-scene away.
+- **Headlines:** `{SIM}-এর অতিরিক্ত টাকা কি` and
+  `<mark> বা ব্যাংকে নিতে চান?` (the mark is the inline brand image) cross-fade
+  out at 0.56, then `খুব শীঘ্রই আসছে...` grows in with a glow.
+- **Transition:** a soft white flash at 10.34s covers the hand-off.
+- **Sound:** whoosh into the flash.
+- **Voice-over** (`vo/vo_s4_short.mp3`) at 8.600s → 10.258s.
 
----
+## Scene 5 — `s5` — 11.000s → 14.500s — `operatorGrid`
 
-## Scene 5 — `s5` — 9.000s → 10.000s — `logoReveal`
+A row of four third-party operator marks, one per white card, revealing left to
+right. This is the scene that shows the product works on any operator.
 
-| | |
-|---|---|
-| **Logo** | `assets/logo_trimmed.png` — the uploaded FlexiTaka logo, unaltered |
-| **Tagline** | `SIM BALANCE TO CASH` |
-| **Call to action** | `COMING SOON` in a yellow pill |
-| **Voice-over** | `শীঘ্রই আসছে!` — starts at 8.550s, i.e. before the scene begins |
-| **Transition** | `sweepFrame` at 9.280s for 0.62s |
+- **Headline:** `যেকোনো অপারেটরের {SIM} থেকেই`
+- **Cards:** `bkash.png`, `robi.png`, `banglalink.png`, `grameenphone.png` —
+  drawn unmodified, `object-fit: contain`, so every mark keeps its own aspect
+  ratio. `highlight: -1` means no single brand is singled out.
+- **Sound:** whoosh + click on arrival.
+- **Voice-over** (`vo/vo_s5_operators.mp3`) at 11.550s → 13.880s.
 
-The logo fades up and settles under a soft green radial glow. The tagline
-fades in beneath it, its letter-spacing tightening as it lands. The yellow
-`COMING SOON` pill rises and scales into place.
+## Scene 6 — `s6` — 14.500s → 20.000s — `logoReveal`
 
-A **brightness-only** light sweep then travels across the logo, masked through
-the logo's own shape with `mix-blend-mode: screen`. It adds light *through* the
-artwork — it never redraws, recolours or distorts it.
+The end card: the FlexiTaka logo, the tagline and the call to action.
 
-**The end card holds.** The final scene has no fade-out, so the logo is at full
-strength on the last frame of the video.
+- **Props:** `logo: assets/logo_trimmed.png`, `tagline: SIM BALANCE TO CASH`,
+  `cta: COMING SOON`.
+- **Two light sweeps** (0.38–0.80 and 1.62–2.17) cross the logo. The sweep is a
+  **brightness-only layer masked by the logo itself**, so the logo file is never
+  altered — no recolour, no redraw, no distortion.
+- **Idle float:** a ±4px vertical drift after 0.92s keeps the long hold alive.
+- **transition:** flash at the cut, riser just before it.
+- **Voice-over** (`vo/vo_s6_flexitaka.mp3`) at 15.050s → 19.598s.
 
 ---
 
 ## The voice-over script
 
-Deliberately shorter than the on-screen text. The full sentences stay on screen
-(the brand message); the narration reads the keyword version, which is how a
-professional ad is normally cut.
-
-| Scene | Screen text | Spoken |
+| scene | voiced line | on-screen |
 |---|---|---|
-| 1 | বিকাশে টাকা পাঠাতে গিয়ে... | বিকাশে টাকা পাঠাতে গিয়ে… |
-| 2 | ভুল করে SIM-এ রিচার্জ করে ফেলেছেন? | ভুল করে রিচার্জ হয়ে গেছে? |
-| 3 | SIM-এ অতিরিক্ত টাকা পড়ে আছে? | অতিরিক্ত টাকা পড়ে আছে? |
-| 4 | SIM-এর অতিরিক্ত টাকা কি বিকাশ বা ব্যাংকে নিতে চান? | বিকাশে নাকি ব্যাংকে? |
-| 5 | COMING SOON | শীঘ্রই আসছে! |
+| s1 | বিকাশে টাকা পাঠাতে গিয়ে… | ⟨brand mark⟩ থেকে টাকা পাঠাতে গিয়ে... |
+| s2 | ভুল করে রিচার্জ হয়ে গেছে? | ভুল করে {SIM}-এ রিচার্জ করে ফেলেছেন? |
+| s3 | অতিরিক্ত টাকা পড়ে আছে? | {SIM}-এ অতিরিক্ত টাকা পড়ে আছে? |
+| s4 | বিকাশে নাকি ব্যাংকে? | {SIM}-এর অতিরিক্ত টাকা কি ⟨brand mark⟩ বা ব্যাংকে নিতে চান? → খুব শীঘ্রই আসছে... |
+| s5 | যেকোনো অপারেটরের সিম থেকেই। | যেকোনো অপারেটরের {SIM} থেকেই |
+| s6 | ফ্লেক্সিটাকা — সিম ব্যালান্স টু ক্যাশ। খুব শীঘ্রই আসছে! | SIM BALANCE TO CASH · COMING SOON |
 
-Each line is peak-normalised independently so the five clips sit at a
-consistent level, and each is placed inside its own scene window by
-`lib/plan-audio.js`.
+The voice-over is deliberately **shorter than the on-screen text**. The full
+sentences stay on screen as the brand message, while the narration speaks the key
+phrase of each — which is how a professional ad is paced. Reading all ~69
+on-screen syllables aloud would take roughly 12s on its own.
 
----
+Every line is auto-placed inside its own scene by `lib/plan-audio.js`. If a line
+would run past the end of its scene, the planner slides it earlier, then speaks
+it up to `maxSpeed`, and only as a last resort lengthens the scene — so a line is
+never cut off and two lines never overlap. Run `node lib/dump-plan.js` to see the
+result, or read `build/audio_report.json` after a render.
 
-## Brand-name note
+## Sound design
 
-Scenes 1 and 4 display **"বিকাশ" (bKash)**, a third-party trademark. That was the
-explicit instruction for this teaser, but a legal/brand review is advisable
-before public use. The neutral alternative `মোবাইল ওয়ালেট বা ব্যাংকে` can be
-substituted in the headline text in `video.config.js` and the video re-rendered
-in one command.
+| file | used for |
+|---|---|
+| `sfx/whoosh.mp3` | scene entrances and cuts |
+| `sfx/click.mp3` | a UI press |
+| `sfx/ding.mp3` | a confirmation |
+| `sfx/riser.mp3` | into the end reveal |
+
+All four are synthesised from scratch by `sfx/make_sfx.sh` (ffmpeg only), so the
+kit carries no third-party sample. They are anchored to scenes, so they travel
+with the timeline when you change scene lengths. Effects sit on their own bus;
+music ducking is driven by the voice alone.
+
+## Third-party trademark note
+
+Scenes 1, 4 and 5 display marks belonging to **bKash**, **Robi Axiata**,
+**BanglaLink** and **Grameenphone**, and the voice-over says "বিকাশ". These are
+third-party trademarks used on the client's explicit instruction. **Written
+permission / legal clearance from each brand should be obtained before the video
+is published, broadcast or run as an advertisement.** To remove any of them,
+delete its entry from `scenes[s5].props.operators` and the `headLogo` /
+`headlines[].logo` references, then re-render.

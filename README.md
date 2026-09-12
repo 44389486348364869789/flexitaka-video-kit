@@ -219,6 +219,89 @@ redraws, recolours or distorts it.
 like, but never rescale, recolour or redraw the artwork. Point
 `scenes[].props.logo` at your file and re-render.
 
+### Third-party operator logos
+
+The kit can show partners' brand marks, and the same never-alter rule applies to
+them. `assets/logos/` holds the four marks used by the default video:
+
+| file | brand |
+|---|---|
+| `assets/logos/bkash.png` | bKash |
+| `assets/logos/robi.png` | Robi Axiata |
+| `assets/logos/banglalink.png` | BanglaLink (the 2025 "heart B" mark) |
+| `assets/logos/grameenphone.png` | Grameenphone |
+
+Each PNG was normalised once — background made transparent, transparent margin
+cropped — and **not one pixel of the mark itself was redrawn, recoloured or
+rescaled**. Where they appear:
+
+- **in a headline**, with `headlines[].logo` — the mark is rendered inline at
+  `1.02em`, so it sits on the text baseline like a word would. This is how scene 1
+  and scene 4 show an operator mark where the brand's written name used to be.
+- **on a card**, with `props.headLogo` — used for the transfer card's header.
+- **in a row**, with the `operatorGrid` scene kind — one white card per brand.
+  The cards use `object-fit: contain` and a `max-width`, so every mark keeps its
+  own aspect ratio no matter how the card is sized. No mark is ever stretched to
+  fit a common box.
+
+```js
+// a row of marks — one entry per card
+{
+  id: 's5', kind: 'operatorGrid', duration: 3.5, designDuration: 3.5,
+  headlines: [{ text: 'যেকোনো অপারেটরের {SIM} থেকেই', size: 74, appear: 0.03 }],
+  vo: { file: 'vo/vo_s5_operators.mp3', cue: 0.55 },
+  props: {
+    appear: 0.16, stagger: 0.16, highlight: -1,
+    operators: [
+      { file: 'assets/logos/bkash.png',        alt: 'bKash' },
+      { file: 'assets/logos/robi.png',         alt: 'Robi' },
+      { file: 'assets/logos/banglalink.png',   alt: 'BanglaLink' },
+      { file: 'assets/logos/grameenphone.png', alt: 'Grameenphone' },
+    ],
+  },
+}
+```
+
+`highlight: -1` means no single brand is picked out. Set it to a card's index to
+put the yellow ring on that one instead.
+
+> **These are third-party trademarks.** They are used here because the client
+> asked for them. Get written permission / legal clearance from each brand
+> before publishing. See [section 7](#7-notes-and-caveats).
+
+### Sound effects
+
+`sfx/` holds four short effects, all synthesised by `sfx/make_sfx.sh` with
+ffmpeg, so the kit ships no third-party sample and the sound design is
+reproducible from scratch:
+
+| file | what it is | used for |
+|---|---|---|
+| `whoosh.mp3` | filtered pink-noise swell | scene entrances and cuts |
+| `click.mp3` | 45 ms sine tick | a UI press |
+| `ding.mp3` | 988 Hz + two bell partials | a confirmation |
+| `riser.mp3` | 1.3 s white-noise swell | into the end reveal |
+
+They are placed **relative to a scene**, so they travel with the timeline when
+you change scene lengths — exactly like transitions:
+
+```js
+audio: {
+  sfx: {
+    masterGainDb: -9,          // the whole bus, kept well under the voice
+    cues: [
+      { file: 'sfx/whoosh.mp3', anchor: 's1', at: 0.02, gainDb: -3 },
+      { file: 'sfx/ding.mp3',   anchor: 's1', at: 2.24, gainDb: -1 },
+      { file: 'sfx/riser.mp3',  anchor: 's6', at: -0.90, gainDb: -4 },  // starts just before the cut
+    ],
+  },
+}
+```
+
+The effects are summed on their **own bus**. The music ducking is driven by the
+voice bus alone, so an effect never pulls the music down. Anything outside the
+timeline is skipped with a printed note rather than failing the render.
+
 ---
 
 ## 5. 🎬 Prompt Template
@@ -291,12 +374,15 @@ left dangling), shortens scene 5, and confirms the total with
 The default config renders the FlexiTaka "COMING SOON" teaser exactly:
 
 ```
-duration   : 10.000000 s   (exact, matches the config)
-frames     : 300 @ 30 fps  (exact)
+duration   : 20.000000 s  (exact, matches the config)
+frames     : 600 @ 30 fps  (exact)
 resolution : 1920 x 1080, yuv420p, H.264 High
-audio      : AAC, 48 kHz stereo — voice-over + ducked music
+audio      : AAC, 48 kHz stereo — voice-over + ducked music + effects
 true peak  : -1.5 dBTP     (no clipping; flat factor 0.0)
 ```
+
+Six scenes: a transfer card that becomes a recharge confirmation → a SIM card
+→ a counter → a flow to wallet → a row of operator marks → the end card.
 
 The pipeline was also run from a **clean extraction** of the delivered ZIP —
 fresh `npm install`, then `./render.sh` — to confirm the source genuinely
@@ -324,12 +410,17 @@ neither shows an error:
   the DOM, `DRAW` for the animation) and are listed in `KNOWN_KINDS` in
   `lib/timeline.js`. Add a function to each, register the kind, and reference it
   from the config. Existing kinds: `transferCard`, `simCard`, `counterBars`,
-  `flowToWallet`, `logoReveal`.
+  `flowToWallet`, `operatorGrid`, `logoReveal`.
 - **The `frames/` directory is generated**, not shipped. `render.sh` recreates it.
-- **Brand-name review flag.** The default config displays "বিকাশ" (bKash), a
-  third-party trademark. That was the client's explicit instruction for this
-  teaser, but for public use a legal/brand review is advisable. The neutral
-  alternative `মোবাইল ওয়ালেট বা ব্যাংকে` can be substituted in the headline text
-  and the video re-rendered in one command.
+- **Third-party trademarks — clearance required.** The default video displays
+  four third-party marks: **bKash**, **Robi Axiata**, **BanglaLink** and
+  **Grameenphone** (as logo images), and the word "বিকাশ" in the voice-over. These belong to
+  their respective owners and are used here on the client's explicit instruction.
+  **Written permission / legal clearance from every brand should be obtained
+  before the video is published, broadcast or run as an advertisement.** Using a
+  mark to state compatibility is not the same as being licensed to advertise with
+  it. To drop any of them, delete its `operators[]` entry (and the `headLogo` /
+  `headlines[].logo` references) in `video.config.js` and re-render; a neutral
+  wording such as `মোবাইল ওয়ালেট বা ব্যাংকে` can stand in for a brand name.
 - **No people, no photographs, no stock footage, no emojis, no watermarks** —
   the design is typography and simple vector symbols only.

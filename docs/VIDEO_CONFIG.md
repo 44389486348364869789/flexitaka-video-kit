@@ -135,8 +135,15 @@ The array **order is the timeline order**. Each entry:
 | `transferCard` | A phone-money transfer card that becomes a recharge confirmation | `sendLabel`, `rechargeLabel`, `sheetLabel`, `sheetSub`, `currency` |
 | `simCard` | A SIM card with a success badge and a warning mark | `badge`, `mark` |
 | `counterBars` | A bar chart that counts a value up | `counterTarget`, `counterPrefix`, `bars`, `barHeights` |
-| `flowToWallet` | Particles travelling along an arc from one symbol to another | `particles` |
-| `logoReveal` | The brand logo + tagline + call to action, with a light sweep | `logo`, `tagline`, `cta` |
+| `flowToWallet` | particles travelling from one symbol to another |
+| `operatorGrid` | a row of brand marks, one white card each |
+| `logoReveal` | the brand logo + tagline + call to action |
+
+`operatorGrid` takes `props.operators` — one entry per card, each
+`{ file, alt }`. Cards use `object-fit: contain` with a `max-width`, so every
+mark keeps its own aspect ratio and is never stretched (see README section 4).
+`props.appear` and `props.stagger` time the reveal; `props.highlight` is the
+index of the card that gets the yellow ring, or `-1` for none.
 
 ### `headlines[]`
 
@@ -164,6 +171,29 @@ when you change the scene's duration — that is how a line is never cut off.
 You never need to hand-place a line: `lib/plan-audio.js` fits it into the
 scene's window automatically and reports any compromise. Run
 `./render.sh plan` to see where every line lands.
+
+### `sfx`
+
+Sound effects, summed on their own bus:
+
+```js
+sfx: {
+  masterGainDb: -9,          // the whole bus, kept well under the voice
+  cues: [
+    { file: 'sfx/whoosh.mp3', anchor: 's1', at: 0.02,  gainDb: -3 },
+    { file: 'sfx/riser.mp3',  anchor: 's6', at: -0.90, gainDb: -4 },  // starts just before the cut
+  ],
+}
+```
+
+`anchor` names a scene and `at` is seconds after that scene **starts** (negative
+means it starts before the cut). Because cues are anchored rather than timed
+absolutely, they stay on the beat when you change scene lengths. A cue that
+would land outside the timeline is skipped with a printed note instead of
+failing the render; an `anchor` naming a scene that does not exist is an error.
+
+Effects never duck the music — the ducking sidechain is fed by the voice bus
+alone, so a whoosh cannot pump the bed.
 
 ---
 

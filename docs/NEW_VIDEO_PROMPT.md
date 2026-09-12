@@ -68,35 +68,39 @@ Ask before editing anything — a wrong assumption wastes a full render:
 
 ## Worked examples
 
-### 20 seconds, same five scenes, slower pacing
+### 20 seconds, same six scenes, slower pacing
 
-> Make a new video with the FlexiTaka Video Kit. I want it **20 seconds** long
-> instead of 10, with the same five scenes but slower pacing: scene 1 gets 6s,
-> scene 2 and 3 get 4s each, scene 4 gets 5s and the end card gets 1s. Change
-> scene 3's headline to `আপনার SIM-এ জমে থাকা টাকা` and keep everything else as
-> it is. Reuse the existing voice-over clips and music. Run `./render.sh plan`
-> first so I can see the timing, then render.
+> "Make the video 20 seconds: scene 1 = 4s, scene 2 and 3 = 3s each,
+> scene 4 = 3s, the operator row = 3.5s, and the end card held for 3.5s.
+> Keep everything else the same."
 
-*Agent edits:* five `duration` values and one `headlines[0].text`. Then
-`./render.sh`. Nothing else changes.
+The agent changes six `duration` values and re-renders. Because transitions and
+sound effects are anchored to scenes, they follow the new timings automatically.
+
+### Add a row of partner logos
+
+> "Add a scene after the wallet flow that shows our four partner logos in a row —
+> bKash, Robi, BanglaLink and Grameenphone — and drop the scene that shows a SIM
+> card on its own. Hold each logo row for 3 seconds."
+
+The agent adds a `operatorGrid` scene, deletes the old one, and puts the logo
+files in `assets/logos/`.
 
 ### 8 seconds, silent, vertical
 
-> Take the FlexiTaka Video Kit and make an 8-second **silent** teaser at
-> **1080×1920** (9:16). Keep scenes 1, 4 and 5 only, 3s / 4s / 1s. Set
-> `audio.enabled` to false. Keep the logo and the colours.
+> "Cut it to 8 seconds, 1080x1920, no audio at all, and drop the end card."
 
-*Agent edits:* `video.width`/`video.height`; removes two entries from `scenes`;
-sets three durations; sets `audio.enabled: false`. `./render.sh` skips audio.
+The agent edits `video.width` / `video.height`, sets `audio.enabled = false`, and
+removes the `logoReveal` entry (the validator would otherwise stop the render if a
+transition still pointed at it).
 
 ### Reorder + drop a scene
 
-> Remove scene 3 from the FlexiTaka Video Kit and move the end card to 0.5s.
-> Make the video 8 seconds total.
+> "Put the operator row first, and delete the counter scene."
 
-*Agent edits:* deletes that array entry, and removes any `transitions` entry
-whose `anchor` names the deleted `id` (the validator fails loudly if one is left
-dangling). Then confirms the total with `./render.sh plan`.
+Scene order is array order, so the agent moves one entry and deletes another. If
+anything still references the deleted scene's `id`, validation fails loudly
+rather than rendering something wrong.
 
 ### New text only
 
