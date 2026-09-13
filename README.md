@@ -4,9 +4,9 @@ A reusable, editable motion-graphics video project. Edit **one config file**, ru
 **one command**, get a finished MP4 — with Bangla typography, music and sound effects.
 
 > This particular cut ships **without narration**: no scene carries a `vo` block, so
-the soundtrack is the music bed plus transition sound effects. The voice-over
-machinery is fully intact and documented below — add a `vo` block to any scene
-and the auto-timing and ducking chain returns.
+> the soundtrack is the music bed plus transition sound effects. The voice-over
+> machinery is fully intact and documented below — add a `vo` block to any scene
+> and the auto-timing and ducking chain returns.
 
 The whole video is built from HTML + CSS + JavaScript. A headless Chromium
 screenshots the animated page frame by frame, then ffmpeg assembles the PNG
@@ -67,6 +67,7 @@ flexitaka-video-kit/
 └── docs/
     ├── HOW_IT_WORKS_BN.md   ← full walkthrough in Bangla, with verified output
     ├── VO_SCRIPT_BN.md      ← narration script (Bangla), timed to the render
+    ├── SERVICE_VIDEO_SCRIPT_BN.md ← 42s service-explainer script + scene plan (Bangla)
     ├── VIDEO_CONFIG.md      ← every config field, explained
     ├── NEW_VIDEO_PROMPT.md  ← the prompt template for agents
     ├── SCENES.md            ← scene-by-scene description of the default video
@@ -368,6 +369,9 @@ Please:
 
 A longer version, with the rules an agent should follow and the follow-up
 questions it should ask, is in **`docs/NEW_VIDEO_PROMPT.md`**.
+
+A worked script + scene plan for a longer, service-explainer video is in
+**`docs/SERVICE_VIDEO_SCRIPT_BN.md`**.
 
 ### Worked example — a 20-second cut with different text
 
