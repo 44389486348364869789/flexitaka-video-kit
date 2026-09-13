@@ -1,42 +1,49 @@
 /**
  * ============================================================================
- *  video.config.js   —   THE ONE FILE YOU EDIT TO MAKE A NEW VIDEO
+ *  video.config.js  —  FlexiTaka SERVICE EXPLAINER (marketplace concept)
  * ============================================================================
  *
- *  Everything about the output lives here: length, scene order, on-screen
- *  text, brand colours, music, voice-over and sound effects. The render
- *  pipeline reads this file, so changing a value here and re-running
- *  `./render.sh` produces a new video. You normally never touch index.html
- *  or lib/.
+ *  THE ONE FILE THAT DEFINES THIS VIDEO. Length, scenes, on-screen text, the
+ *  voice-over clips passed in by the client, music, sound effects.
  *
- *  LENGTH IS NOT FIXED. The video is exactly as long as the sum of the scene
- *  `duration` values — here 3.5+2.5+2.5+2.5+3.5+5.5 = 20.0s. Change them and
- *  the video gets shorter or longer; the frame count, the audio length and
- *  every timing window are derived from the config, not hard-coded.
+ *  ---------------------------------------------------------------------------
+ *  THIS CUT
+ *  ---------------------------------------------------------------------------
+ *  A ~46-second Bangla service explainer that explains FlexiTaka as a
+ *  marketplace: one person's unused SIM balance on one side, another person's
+ *  need for a cheaper recharge on the other, and FlexiTaka matching the two.
  *
- *  ADD / REMOVE / RE-ORDER SCENES by editing the `scenes` array. The array
- *  order IS the timeline order.
+ *  It is NOT the earlier 20s "COMING SOON" teaser. Different structure,
+ *  different length, different scenes, and most importantly it actually
+ *  explains the service rather than teasing it.
  *
- *  NOTHING GETS CUT OR OVERLAPS. Each scene's voice-over is placed
- *  automatically inside that scene's window; if a line would run past the
- *  scene, the planner first slides it earlier, then (only if needed) speaks it
- *  slightly faster, and only as a last resort lengthens the scene. Every
- *  adjustment is printed by `node lib/dump-plan.js` and written to
- *  build/audio_report.json.
+ *  The voice-over is the CLIENT'S OWN RECORDING (vo/vo_s1..s6.wav), sliced from
+ *  the single file they supplied. Its line boundaries were measured with
+ *  silencedetect, and every scene duration below was derived from the measured
+ *  speech length of its own line — so no line is cut off and none is rushed.
  *
- *  THIS CUT HAS NO NARRATION. No scene below carries a `vo` block, so the
- *  audio build has no voice bus to mix: the soundtrack is the music bed plus
- *  the sound effects alone. The voice-over machinery is still fully wired --
- *  add a `vo: { file, cue, text }` block to any scene and the whole auto-timing
- *  / ducking chain comes straight back. Because there is no speech to stay
- *  under, the bed is set louder here than in the narrated cut.
+ *  ---------------------------------------------------------------------------
+ *  LENGTH
+ *  ---------------------------------------------------------------------------
+ *  Not fixed. It is exactly the sum of the scene durations:
+ *      3.6 + 10.8 + 7.7 + 10.6 + 8.3 + 5.1 = 46.1s
+ *  and every scene duration is (leadIn + measured speech + tail + breathing
+ *  room) rounded up to 0.1s. Change a duration and the frame count, the audio
+ *  length and every timing window follow automatically.
  *
- *  Quick start:   ./render.sh              (full build)
- *                 ./render.sh probe        (a few still frames, fast)
- *                 ./render.sh check        (environment + font check only)
- *                 node lib/dump-plan.js    (show the computed timeline)
+ *  ---------------------------------------------------------------------------
+ *  SCENES AT A GLANCE
+ *  ---------------------------------------------------------------------------
+ *    s1   0.0– 3.6   splitCompare    the problem, in two panels
+ *    s2   3.6–14.4   twoSidedMatch   what FlexiTaka is — the match itself
+ *    s3  14.4–22.1   splitCompare    the problem again, named plainly
+ *    s4  22.1–32.7   appStep         what you can take the value out as
+ *    s5  32.7–41.0   operatorGrid    any operator's SIM
+ *    s6  41.0–46.1   logoReveal      brand + tagline, held to the last frame
  *
- *  See README.md for the "new video" prompt template.
+ *  Quick start:   ./render.sh              full build
+ *                 ./render.sh check        environment + font check, renders nothing
+ *                 node lib/dump-plan.js    show the computed timeline + audio plan
  * ============================================================================
  */
 
@@ -47,265 +54,289 @@ module.exports = {
     width: 1920,
     height: 1080,
     fps: 30,
-    crf: 16,           // lower = better quality, bigger file (16 is near-lossless)
-    preset: 'slow',    // ffmpeg x264 preset
-    outputName: 'flexitaka_coming_soon_teaser_20s_v3',   // -> output/<name>.mp4
+    crf: 16,
+    preset: 'slow',
+    outputName: 'flexitaka_service_video_46s',
   },
 
   /* ------------------------------------------------------------ brand colours */
-  /* These become CSS variables (--green, --yellow, ...) used by every scene. */
   theme: {
-    green:      '#025734',   // primary
+    green:      '#025734',
     greenLight: '#04724A',
     greenDeep:  '#013D24',
     greenPale:  '#CFE8DA',
-    yellow:     '#FDB801',   // accent
+    yellow:     '#FDB801',
     yellowSoft: '#FFC933',
-    cream:      '#F4FBF7',   // page background
+    cream:      '#F4FBF7',
     ink:        '#FFFFFF',
   },
 
   /* ---------------------------------------------------------------- typography */
-  /* Font files live in fonts/. Bangla = Hind Siliguri, Latin = Poppins. */
   type: {
     banglaFamily: "'HS',sans-serif",
     latinFamily:  "'PP',sans-serif",
-    headline:     78,    // default headline size (px)
-    headlineMin:  40,    // auto-fit will never shrink a headline below this
-    margin:       130,   // left/right safe margin for headlines (px)
+    headline:     70,
+    headlineMin:  40,
+    margin:       120,
   },
 
   /* --------------------------------------------------------------------- audio */
-  /* Set enabled:false for a silent video — the pipeline then skips all audio
-     steps and just copies the silent master to output/.                        */
   audio: {
     enabled: true,
     sampleRate: 48000,
-    targetTruePeakDb: -1.5,   // final true-peak ceiling (dBTP)
+    targetTruePeakDb: -1.5,
 
     music: {
-      file:     'music/flexitaka_teaser_bgm_20s.mp3',
-      gainDb:   -9,           // level of the bed before ducking (louder: no VO)
-      fadeIn:   0.9,          // seconds
-      fadeOut:  2.2,          // seconds, measured back from the end
+      file:     'music/flexitaka_service_bgm.mp3',
+      /* The bed sits well under the narration. With a voice bus present the
+         planner also side-chain-ducks the music by the voice, so the bed is
+         set here at a level that is audible in the gaps but never competes
+         with speech. */
+      gainDb:   -15,
+      fadeIn:   0.9,
+      fadeOut:  2.2,
     },
 
-    // The music is pushed down while the voice speaks. With no voice-over in
-    // this cut the side-chain is fed by the SOUND-EFFECT bus instead, so the
-    // bed still breathes under each transition accent.
     duck: { threshold: 0.12, ratio: 2, attackMs: 8, releaseMs: 320 },
 
     vo: {
-      leadIn:   0.18,   // default gap between a scene starting and its VO starting
-      tailGap:  0.05,   // keep the line this far clear of the scene end
-      peakDb:  -3.0,    // every VO line is peak-normalised to this, so lines match
-      tailPad:  0.06,   // silence kept after the last phoneme when trimming
-      maxSpeed: 1.32,   // never speed a line up more than this to make it fit
-      noiseDb:  -38,    // silence-detection threshold for trimming head/tail
+      leadIn:   0.15,   // scene start -> line start
+      tailGap:  0.05,   // the line must clear the scene end by this much
+      peakDb:  -3.0,    // every line peak-normalised, so they match each other
+      tailPad:  0.06,
+      maxSpeed: 1.32,   // never rush a line harder than this to make it fit
+      noiseDb:  -38,    // head/tail silence-detection threshold
     },
 
-    /* ------------------------------------------------------------ sound design
-     * Short effects placed RELATIVE TO A SCENE, so they travel with the
-     * timeline if you change scene lengths: `anchor` names the scene and `at`
-     * is seconds after that scene starts (negative = just before the cut).
-     * They are mixed on their own bus, well below the voice-over, and the
-     * music is ducked only by the voice, never by the effects.
-     */
+    /* Sound effects, each anchored to a scene so they travel with the timeline
+       when a scene length changes. Positions are all inside their scene (or
+       just before it, for a pre-cut riser), which avoids the one clamp that
+       would otherwise fire: a cue at t >= DUR is skipped, and the last scene
+       starts at 41.0s of a 46.1s video. */
     sfx: {
       masterGainDb: -6,
       cues: [
         { file: 'sfx/whoosh.mp3', anchor: 's1', at: 0.02, gainDb: -3 },
-        { file: 'sfx/click.mp3',  anchor: 's1', at: 1.55, gainDb: -2 },
-        { file: 'sfx/ding.mp3',   anchor: 's1', at: 2.24, gainDb: -1 },
-        { file: 'sfx/whoosh.mp3', anchor: 's2', at: 0.02, gainDb: -3 },
-        { file: 'sfx/click.mp3',  anchor: 's3', at: 0.50, gainDb: -2 },
-        { file: 'sfx/ding.mp3',   anchor: 's3', at: 1.34, gainDb: -2 },
-        { file: 'sfx/whoosh.mp3', anchor: 's4', at: 1.80, gainDb: -2 },
-        { file: 'sfx/whoosh.mp3', anchor: 's5', at: 0.24, gainDb: -2 },
-        { file: 'sfx/click.mp3',  anchor: 's5', at: 0.30, gainDb: -3 },
-        { file: 'sfx/riser.mp3',  anchor: 's6', at: -0.90, gainDb: -4 },
-        { file: 'sfx/ding.mp3',   anchor: 's6', at: 0.56, gainDb: -1 },
-        { file: 'sfx/click.mp3',  anchor: 's6', at: 1.04, gainDb: -3 },
-        { file: 'sfx/whoosh.mp3', anchor: 's6', at: 1.56, gainDb: -3 },
+
+        { file: 'sfx/riser.mp3',  anchor: 's2', at: -0.35, gainDb: -4 },
+        { file: 'sfx/whoosh.mp3', anchor: 's2', at: 0.90, gainDb: -4 },
+        { file: 'sfx/ding.mp3',   anchor: 's2', at: 3.10, gainDb: -1 },
+
+        { file: 'sfx/whoosh.mp3', anchor: 's3', at: 0.02, gainDb: -3 },
+        { file: 'sfx/click.mp3',  anchor: 's3', at: 0.60, gainDb: -3 },
+
+        { file: 'sfx/riser.mp3',  anchor: 's4', at: -0.35, gainDb: -4 },
+        { file: 'sfx/click.mp3',  anchor: 's4', at: 0.55, gainDb: -3 },
+        { file: 'sfx/ding.mp3',   anchor: 's4', at: 2.10, gainDb: -2 },
+
+        { file: 'sfx/whoosh.mp3', anchor: 's5', at: 0.02, gainDb: -3 },
+        { file: 'sfx/click.mp3',  anchor: 's5', at: 0.45, gainDb: -4 },
+        { file: 'sfx/click.mp3',  anchor: 's5', at: 0.95, gainDb: -4 },
+        { file: 'sfx/click.mp3',  anchor: 's5', at: 1.45, gainDb: -4 },
+
+        { file: 'sfx/riser.mp3',  anchor: 's6', at: -0.60, gainDb: -4 },
+        { file: 'sfx/ding.mp3',   anchor: 's6', at: 0.55, gainDb: -1 },
+        { file: 'sfx/whoosh.mp3', anchor: 's6', at: 1.30, gainDb: -3 },
       ],
     },
   },
 
   /* -------------------------------------------------------------- transitions */
-  /* Whole-frame overlay effects. `anchor` names a scene and `at` is the number
-     of seconds after that scene's start, so effects follow the timeline when
-     you change scene lengths. Available types: 'flash', 'sweepFrame'.         */
+  /* NOTE: `at` is always POSITIVE. The planner adds it to the anchor scene's
+     start time, so a negative value would evaluate to `scene.end - dur` and
+     push the flash past the scene's own cut. A flash at +0.02s reads as an
+     accent ON the cut, which is what is wanted here. */
   transitions: [
-    { type: 'flash',      anchor: 's4', at: 1.84, dur: 0.32, strength: 0.34 },
-    { type: 'sweepFrame', anchor: 's5', at: 0.26, dur: 0.62 },
-    { type: 'flash',      anchor: 's6', at: 0.02, dur: 0.30, strength: 0.24 },
+    { type: 'flash',      anchor: 's2', at: 0.03, dur: 0.32, strength: 0.26 },
+    { type: 'flash',      anchor: 's3', at: 0.03, dur: 0.30, strength: 0.26 },
+    { type: 'sweepFrame', anchor: 's4', at: 0.04, dur: 0.62 },
+    { type: 'flash',      anchor: 's5', at: 0.03, dur: 0.30, strength: 0.24 },
+    { type: 'flash',      anchor: 's6', at: 0.03, dur: 0.34, strength: 0.30 },
   ],
 
   /* =========================================================================
    *  THE TIMELINE — scenes play in this order
    * =========================================================================
-   *
-   *  id             unique name; used by transitions/SFX and by the audio planner
-   *  kind           which visual module draws the scene (see lib/engine.js)
-   *                   transferCard  — a phone-money transfer card that becomes a
-   *                                   recharge confirmation
-   *                   simCard       — a SIM card with a success badge / warning
-   *                   counterBars   — a bar chart that counts a value up
-   *                   flowToWallet  — particles travelling from one symbol to another
-   *                   operatorGrid  — a row of third-party brand marks on cards
-   *                   logoReveal    — the brand logo + tagline + call to action
-   *  duration       seconds this scene is on screen (this is the LENGTH knob)
-   *  designDuration the length the animation was drawn for. If you shorten a
-   *                 scene below this, its animation is compressed to fit so no
-   *                 element is ever cut off. If you lengthen it, the animation
-   *                 simply holds at the end.
-   *  headlines      text shown at the top. `{...}` renders in the Latin font,
-   *                 so {SIM} inside Bangla text uses Poppins. `logo` puts an
-   *                 image inline before the text, so a partner's wordmark can
-   *                 stand in for its written name. Long lines are auto-shrunk.
-   *  vo             voice-over for this scene. `file` is an audio clip in vo/.
-   *                 `cue` is when the clip starts, in seconds from the scene
-   *                 start (may be negative to start just before the scene).
-   *                 `spillBefore` is how many seconds early it may start.
-   *  props          scene-specific settings handed to the visual module.
+   *  Each scene's `vo` carries the client's own recording for that line, and
+   *  `duration` is sized from that line's MEASURED speech length — see the
+   *  header. `designDuration` equals `duration`, so each scene's animation
+   *  plays out across its whole window and then holds, rather than being
+   *  compressed and rushed.
    */
   scenes: [
 
-    /* -------------------------------------------------- SCENE 1 — 0.0-3.5s --- */
-    /* An operator's mark, set inline in the headline where the written name
-       used to be. props.headLogo puts the same mark on the card's header. */
+    /* ==================================================== SCENE 1 — 0.0-3.6s
+     * "ফ্লেক্সি টাকা কি?"  — the problem, stated as two panels.
+     * Left: balance sitting unused. Right: a recharge that cost too much.
+     * The dashed divider between them is drawn but never joined. */
     {
       id: 's1',
-      kind: 'transferCard',
-      duration: 3.5,
-      designDuration: 3.0,
+      kind: 'splitCompare',
+      duration: 3.6,
+      designDuration: 3.6,
       headlines: [
-        {
-          text: '\u09a5\u09c7\u0995\u09c7 \u099f\u09be\u0995\u09be \u09aa\u09be\u09a0\u09be\u09a4\u09c7 \u0997\u09bf\u09af\u09bc\u09c7...',
-          logo: 'assets/logos/bkash.png',
-          appear: 0.01,
-        },
+        { text: 'সিমে থাকা ব্যালেন্স কি আসলেই কাজে লাগছে?', size: 66, appear: 0.02 },
       ],
       props: {
-        headLogo: 'assets/logos/bkash.png',
-        sendLabel: 'SEND MONEY',
-        rechargeLabel: 'RECHARGE',
-        sheetLabel: 'SIM RECHARGE',
-        sheetSub: 'SUCCESSFUL',
-        currency: '\u09f3',
+        leftLabel: 'অব্যবহৃত',
+        leftSub: 'সিমে পড়ে আছে',
+        rightLabel: 'রিচার্জ',
+        rightTag: 'প্রয়োজনের বেশি?',
+        amount: 500,
+        currency: '৳ ',
+      },
+      vo: {
+        file: 'vo/vo_s1.wav',
+        text: 'ফ্লেক্সি টাকা কি?',
       },
     },
 
-    /* -------------------------------------------------- SCENE 2 — 3.5-6.0s --- */
+    /* =================================================== SCENE 2 — 3.6-14.4s
+     * The heart of the film. Seller's unused value on the left, buyer's
+     * recharge need on the right, FlexiTaka in the middle matching them.
+     * The two value tokens travel inward and meet under the brand mark. */
     {
       id: 's2',
-      kind: 'simCard',
-      duration: 2.5,
-      designDuration: 2.0,
-      headlines: [{ text: '\u09ad\u09c1\u09b2 \u0995\u09b0\u09c7 {SIM}-\u098f \u09b0\u09bf\u099a\u09be\u09b0\u09cd\u099c \u0995\u09b0\u09c7 \u09ab\u09c7\u09b2\u09c7\u099b\u09c7\u09a8?', size: 72, appear: 0.0 }],
-      props: { badge: 'check', mark: 'exclaim' },
+      kind: 'twoSidedMatch',
+      duration: 10.8,
+      designDuration: 10.8,
+      headlines: [
+        { text: 'দুই প্রয়োজন, এক জায়গায়', size: 68, appear: 0.02 },
+      ],
+      props: {
+        leftTitle: 'ব্যালেন্স',
+        leftSub: 'যেটা এখন দরকার নেই',
+        rightTitle: 'রিচার্জ',
+        rightSub: 'কম দামে করতে চান',
+        logo: 'assets/logo_trimmed.png',
+        pill: 'MARKETPLACE',
+      },
+      vo: {
+        file: 'vo/vo_s2.wav',
+        /* Long line (9.897s measured) — this is why the scene runs 10.8s. */
+        text: 'ফ্লেক্সি টাকা হলো একটি নতুন ডিজিটাল প্ল্যাটফর্ম যেখানে আপনার সিমে থাকা অতিরিক্ত বা প্রয়োজনের চেয়ে বেশি ব্যালেন্সের ভ্যালু কাজে লাগানোর সুযোগ তৈরি হবে।',
+      },
     },
 
-    /* -------------------------------------------------- SCENE 3 — 6.0-8.5s --- */
+    /* ================================================== SCENE 3 — 14.4-22.1s
+     * The problem again, named plainly — "wrong recharge / more balance than
+     * needed". Same scene type as s1 but different copy and a warning mark. */
     {
       id: 's3',
-      kind: 'counterBars',
-      duration: 2.5,
-      designDuration: 2.0,
-      headlines: [{ text: '{SIM}-\u098f \u0985\u09a4\u09bf\u09b0\u09bf\u0995\u09cd\u09a4 \u099f\u09be\u0995\u09be \u09aa\u09a1\u09bc\u09c7 \u0986\u099b\u09c7?', size: 80, appear: 0.0 }],
-      props: { counterTarget: 2450, counterPrefix: '\u09f3 ', bars: 6, barHeights: [130, 175, 225, 280, 340, 400] },
+      kind: 'splitCompare',
+      duration: 7.7,
+      designDuration: 7.7,
+      headlines: [
+        { text: 'ভুল করে রিচার্জ, না দরকারের বেশি ব্যালেন্স?', size: 62, appear: 0.02 },
+      ],
+      props: {
+        leftLabel: 'সিমে ব্যালেন্স',
+        leftSub: 'প্রয়োজন নেই এখন',
+        rightLabel: 'রিচার্জ',
+        rightTag: 'দামি হয়ে যায়',
+        amount: 300,
+        currency: '৳ ',
+      },
+      vo: {
+        file: 'vo/vo_s3.wav',
+        text: 'অনেক সময় ভুল করে সিমে রিচার্জ হয়ে যায় অথবা সিমে এমন ব্যালেন্স থাকে যেটা আপনার এখন প্রয়োজন নেই।',
+      },
     },
 
-    /* -------------------------------------------------- SCENE 4 — 8.5-11.0s -- */
+    /* =================================================== SCENE 4 — 22.1-32.7s
+     * What the value comes out AS. The client asked for the brand marks of the
+     * payment services, each drawn unmodified inside its own row on a white
+     * card — object-fit:contain, so no mark is ever stretched or recoloured. */
     {
       id: 's4',
-      kind: 'flowToWallet',
-      duration: 2.5,
-      designDuration: 2.0,
-      /* The question stays a QUESTION for the whole scene. Neither line carries
-         an `exit`, so both hold all the way to the cut, and nothing here
-         announces the launch - the "coming soon" message belongs to the end
-         card alone (scene 6). */
+      kind: 'appStep',
+      duration: 10.6,
+      designDuration: 10.6,
       headlines: [
-        { text: '{SIM}-\u098f\u09b0 \u0985\u09a4\u09bf\u09b0\u09bf\u0995\u09cd\u09a4 \u099f\u09be\u0995\u09be \u0995\u09bf', size: 72, appear: 0.375 },
-        { text: '\u09ac\u09be \u09ac\u09cd\u09af\u09be\u0982\u0995\u09c7 \u09a8\u09bf\u09a4\u09c7 \u099a\u09be\u09a8?', logo: 'assets/logos/bkash.png', size: 72, top: 196, appear: 0.425 },
+        { text: 'ব্যালেন্সের ভ্যালু নিন ক্যাশ হিসেবে', size: 66, appear: 0.02 },
       ],
-      /* dim:null - no end-of-scene dim, because nothing is revealed afterwards.
-         Set dim:{ from, to, amount } to fade the visual toward a following
-         reveal instead. */
-      props: { particles: 7, dim: null },
+      props: {
+        title: 'ভ্যালু কোথায় নিতে চান?',
+        appear: 0.55,
+        stagger: 0.95,
+        rows: [
+          { logo: 'assets/logos/bkash.png', label: 'বিকাশ' },
+          { logo: 'assets/logos/nagad.png', label: 'নগদ' },
+          { glyph: '৳', label: 'ব্যাংক অ্যাকাউন্ট' },
+        ],
+        button: 'অফার নিশ্চিত করুন',
+      },
+      vo: {
+        file: 'vo/vo_s4.wav',
+        text: 'ফ্লেক্সি টাকা সেই অতিরিক্ত ব্যালেন্সের ভ্যালু ব্যবহার করে আপনাকে সহজে বিকাশ, নগদ অথবা ব্যাংক অ্যাকাউন্টে ক্যাশ নেওয়ার সুবিধা দেওয়ার লক্ষ্য নিয়ে তৈরি হচ্ছে।',
+      },
     },
 
-    /* -------------------------------------------------- SCENE 5 — 11.0-14.5s - */
-    /* Third-party operator marks. Each is drawn unmodified inside a plain white
-       card; object-fit:contain keeps every mark's own aspect ratio intact. */
+    /* =================================================== SCENE 5 — 32.7-41.0s
+     * Every operator's SIM. All five brand marks the client asked for, each
+     * inside its own white card, none recoloured, none stretched. */
     {
       id: 's5',
       kind: 'operatorGrid',
-      duration: 3.5,
-      designDuration: 3.5,
+      duration: 8.3,
+      designDuration: 8.3,
       headlines: [
-        {
-          text: '\u09af\u09c7\u0995\u09cb\u09a8\u09cb \u0985\u09aa\u09be\u09b0\u09c7\u099f\u09b0\u09c7\u09b0 {SIM} \u09a5\u09c7\u0995\u09c7\u0987',
-          size: 74,
-          appear: 0.03,
-        },
+        { text: 'দেশের যেকোনো অপারেটরের সিমে', size: 64, appear: 0.02 },
       ],
       props: {
-        appear: 0.16,
-        stagger: 0.16,
-        highlight: -1,   // no single brand is singled out
-        /* Card geometry, so the row is sized for the number of marks it holds.
-           All three marks below end up limited by `markW`, which means they
-           all span the same width and their heights differ only by their own
-           aspect ratio - the only non-distorting way to balance a row built
-           from files of very different source resolution. */
-        cardW: 470,
-        cardH: 262,
-        gap: 56,
-        markW: 330,
-        markH: 150,
-        /* MOBILE OPERATORS ONLY. bKash is a separate payment service, not a
-           mobile operator, so its mark must never appear in this row - it
-           belongs to the scenes that actually talk about moving money (s1 and
-           the s4 question). Add or remove entries freely; the row re-centres
-           itself and every mark keeps its own aspect ratio (object-fit:
-           contain). BanglaLink here is the CURRENT (rebrand) mark. */
+        appear: 0.70,
+        stagger: 0.50,
+        highlight: -1,          // no single brand is singled out
+        cardW: 300,
+        cardH: 212,
+        gap: 30,
+        markW: 208,
+        markH: 106,
         operators: [
-          { file: 'assets/logos/robi.png',         alt: 'Robi' },
-          /* the BanglaLink source file is the smallest of the three, so it is
-             given a per-mark boost to hold its own beside the others - the
-             mark itself is still never stretched or recoloured. */
-          { file: 'assets/logos/banglalink.png',   alt: 'Banglalink', markW: 356 },
+          { file: 'assets/logos/bkash.png',        alt: 'bKash' },
+          { file: 'assets/logos/nagad.png',        alt: 'Nagad' },
           { file: 'assets/logos/grameenphone.png', alt: 'Grameenphone' },
+          { file: 'assets/logos/robi.png',         alt: 'Robi' },
+          { file: 'assets/logos/banglalink.png',   alt: 'Banglalink' },
         ],
+      },
+      vo: {
+        file: 'vo/vo_s5.wav',
+        text: 'অর্থাৎ আপনার সিমে পড়ে থাকা ব্যালেন্স আর শুধু পড়ে থাকবে না, এর ভ্যালু আপনি প্রয়োজন অনুযায়ী কাজে লাগাতে পারবেন।',
       },
     },
 
-    /* -------------------------------------------------- SCENE 6 — 14.5-20.0s - */
-    /* The end card is designed for the whole 5.5s, so logoScale stays at 1.0 and
-       the original composition is kept exactly. A second light sweep and a slow
-       idle float keep the long hold alive. The logo file itself is never
-       altered: the sweep is a brightness-only layer masked BY the logo. */
+    /* =================================================== SCENE 6 — 41.0-46.1s
+     * The end card. Holds to the last frame — no fade-out — so the logo and
+     * the tagline are at full strength on the final frame. The slogan is Latin
+     * and lives here rather than in a headline.
+     *
+     * designDuration stays 4.1 while duration is 5.1: the reveal animation
+     * plays at its original pace and then HOLDS for the extra second, which is
+     * what gives the end card the ~1.8s of quiet brand time after the last
+     * spoken line (line ends 44.33s, picture runs to 46.1s). */
     {
       id: 's6',
       kind: 'logoReveal',
-      duration: 5.5,
-      designDuration: 5.5,
+      duration: 5.1,
+      designDuration: 4.1,
       headlines: [],
       props: {
-        logo: 'assets/logo_trimmed.png',   // NEVER alter this file — see README
-        tagline: 'SIM BALANCE TO CASH',
-        cta: 'COMING SOON',
-        /* The Bangla launch line, one step below the CTA pill. It lives HERE
-           and nowhere else: the end card is the ONLY place in the video where
-           the "coming soon" message is allowed to appear. Set `sub: null` (or
-           delete the key) to drop the line again. */
-        sub: 'খুব শীঘ্রই আসছে',
-        sweep2At: 1.62,        // second sweep, for the longer hold
+        logo: 'assets/logo_trimmed.png',
+        tagline: 'Your SIM Balance, More Value.',
+        /* No CTA pill: the platform is not launched yet, and "COMING SOON" is
+           not part of this cut's message. The pill is optional — omitting it
+           removes it entirely rather than falling back to a default. */
+        cta: null,
+        sub: null,
+        sweep2At: 1.30,
         sweep2Dur: 0.55,
-        floatFrom: 0.92,       // idle float starts once the card has settled
+        floatFrom: 0.95,
         floatAmp: 4,
+      },
+      vo: {
+        file: 'vo/vo_s6.wav',
+        text: 'ফ্লেক্সি টাকা, ইয়োর সিম ব্যালেন্স, মোর ভ্যালু।',
       },
     },
 
