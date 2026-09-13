@@ -66,6 +66,7 @@ flexitaka-video-kit/
 ├── build/                   ← intermediate mix files + audio_report.json
 └── docs/
     ├── HOW_IT_WORKS_BN.md   ← full walkthrough in Bangla, with verified output
+    ├── VO_SCRIPT_BN.md      ← narration script (Bangla), timed to the render
     ├── VIDEO_CONFIG.md      ← every config field, explained
     ├── NEW_VIDEO_PROMPT.md  ← the prompt template for agents
     ├── SCENES.md            ← scene-by-scene description of the default video
